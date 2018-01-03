@@ -69,7 +69,7 @@ button.
 
 
 General usage
-=============
+-------------
 Starting to type will search user defined entries first, followed by system
 entries. Then the PATH variable will be searched, if there is a single match you can also
 press TAB for auto completion. 
@@ -78,11 +78,11 @@ In general it will launch anything once you press enter, however it won't open a
 terminal.
 
 Calculator
-=========
+----------
 Start by typing "=", followed by your expression, e. g: "=(2+3)^2"
 
 File searches
-=============
+-------------
 It only queries a sqlite database. It does not index files, this is beyond the
 scope a launcher. For the file searches functionality, easyindex is necessary.
 See: git.quitesimple.org/easyindex.
