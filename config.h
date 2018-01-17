@@ -43,6 +43,7 @@ class ConfigReader
 		QString configDirectory;
 		EntryConfig readFromFile(const QString &path);
 		EntryConfig readFromDesktopFile(const QString &path);
+		QStringList desktopIgnoreArgs;
 	public:
 		ConfigReader(QString path);
         QVector<EntryConfig> readConfig();

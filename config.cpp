@@ -21,6 +21,7 @@
 ConfigReader::ConfigReader(QString directory)
 {
 	this->configDirectory = directory;
+	desktopIgnoreArgs << "%F" << "%f" << "%U" << "%u";
 }
 
 
@@ -35,7 +36,10 @@ EntryConfig ConfigReader::readFromDesktopFile(const QString &path)
 	}
 	QTextStream stream(&file);
 	QString firstline = stream.readLine();
-	while(firstline[0] == '#')
+	
+	//There should be nothing preceding this group in the desktop entry file but possibly one or more comments. 
+	//https://standards.freedesktop.org/desktop-entry-spec/latest/ar01s03.html#group-header
+	while(firstline[0] == '#' && !stream.atEnd())
 	{
 		firstline = stream.readLine();
 	}
@@ -47,10 +51,14 @@ EntryConfig ConfigReader::readFromDesktopFile(const QString &path)
 	while(!stream.atEnd())
 	{
 		QString line = stream.readLine();
+		//new group, so we are finished with [Desktop Entry]
+		if(line.startsWith("[") && line.endsWith("]"))
+		{
+			return result;
+		}
 		QStringList splitted = line.split("=");
 		if(splitted.length() >= 2)
 		{
-			qDebug() << splitted [0] + " " + splitted[1];
 			QString key = splitted[0].toLower();
 			if(key == "name")
 			{
@@ -65,14 +73,19 @@ EntryConfig ConfigReader::readFromDesktopFile(const QString &path)
 			}
 			if(key == "exec")
 			{
-				//TODO: the other arguments may also be relevant... except for %f and so
-
 				QStringList arguments = splitted[1].split(" ");
 
 				result.command = arguments[0];
+				arguments = arguments.mid(1);
 				if(arguments.length() > 1)
 				{
-					arguments = arguments.mid(1);
+					for(QString &arg : arguments)
+					{
+						if(!desktopIgnoreArgs.contains(arg))
+						{
+							result.arguments.append(arg);
+						}
+					}
 				}
 			}
 	
@@ -100,10 +113,8 @@ EntryConfig ConfigReader::readFromFile(const QString &path)
 		QStringList splitted = line.split(" ");
 		if(splitted.length() < 2)
 		{
-			// throw new ConfigFormatException("Format must be [key] [value] for every line");
-			
+			throw new ConfigFormatException("misformated line in .qsrun config file");
 		}
-		qDebug() << splitted [0] + " " + splitted[1];
 		QString key = splitted[0];
 		if(key == "arguments")
 		{
