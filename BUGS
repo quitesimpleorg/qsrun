@@ -1,4 +1,2 @@
-Type to fast and search must be triggered again (queues don't work as intended). Here,
-we may need proper mutexes. 
-
+SearchWorker: isPending etc. may need proper locking (with mutexes)
 Memory leaks(ignored for now due to short-running nature of the application)

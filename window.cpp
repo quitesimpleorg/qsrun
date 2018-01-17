@@ -14,7 +14,6 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 #include "window.h"
-#include <QDebug>
 #include <QProcess>
 #include <QProcessEnvironment>
 #include <QDirIterator>
@@ -34,6 +33,7 @@ Window::Window(const QVector<EntryConfig> &configs, const QString &dbpath)
 	connect(this, &Window::beginFileSearch, searchWorker, &SearchWorker::searchForFile);
 	connect(this, &Window::beginContentSearch, searchWorker, &SearchWorker::searchForContent);
 	connect(searchWorker, &SearchWorker::searchResultsReady, this, &Window::handleSearchResults);
+	connect(searchWorker, &SearchWorker::searchCancelled, this, &Window::handleCancelledSearch);
 	searchThread.start();
 	initTreeWidgets();
 	this->lineEdit->installEventFilter(this);
