@@ -400,7 +400,6 @@ void Window::handleCancelledSearch()
 
 void Window::treeSearchItemActivated(QTreeWidgetItem *item, int i)
 {
-	qDebug() << item->text(1);
 	QDesktopServices::openUrl(QUrl::fromLocalFile(item->text(1)));
 }
 
