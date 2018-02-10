@@ -23,6 +23,7 @@
 #include <QDate>
 #include <QHeaderView>
 #include <QDesktopServices>
+#include <QFileIconProvider>
 Window::Window(const QVector<EntryConfig> &configs, const QString &dbpath)
 {
 	this->userEntryButtons = generateEntryButtons(configs);
@@ -363,6 +364,7 @@ void Window::handleSearchResults(const QVector<QString> &results)
 {
 	clearGrid();
 	treeFileSearchResults.clear();
+	QFileIconProvider provider;
 	for(const QString &path : results)
 	{
 		QFileInfo pathInfo(path);
@@ -371,6 +373,7 @@ void Window::handleSearchResults(const QVector<QString> &results)
 		QString datestr = pathInfo.lastModified().toString(Qt::ISODate);
 		QTreeWidgetItem *item = new QTreeWidgetItem(&treeFileSearchResults);
 		item->setText(0, fileName);
+		item->setIcon(0, provider.icon(pathInfo));
 		item->setText(1, absPath);
 		item->setText(2, datestr);
 
