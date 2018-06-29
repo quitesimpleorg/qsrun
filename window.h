@@ -69,6 +69,7 @@ class Window : public QWidget
         void handleSearchResults(const QVector<QString> &results);
         void handleCancelledSearch();
         void treeSearchItemActivated(QTreeWidgetItem *item, int i);
+        void showSearchResultsContextMenu(const QPoint &point);
     signals:
         void beginFileSearch(const QString &query);
         void beginContentSearch(const QString &query);

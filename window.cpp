@@ -24,6 +24,8 @@
 #include <QHeaderView>
 #include <QDesktopServices>
 #include <QFileIconProvider>
+#include <QMenu>
+#include <QClipboard>
 Window::Window(const QVector<EntryConfig> &configs, const QString &dbpath)
 {
 	this->userEntryButtons = generateEntryButtons(configs);
@@ -57,6 +59,28 @@ void Window::initTreeWidgets()
 	treeFileSearchResults.setHeaderLabels(headers);
 	treeFileSearchResults.header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	connect(&treeFileSearchResults, &QTreeWidget::itemActivated, this, &Window::treeSearchItemActivated);
+	treeFileSearchResults.setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
+	connect(&treeFileSearchResults, &QTreeWidget::customContextMenuRequested, this, &Window::showSearchResultsContextMenu);
+}
+
+
+void Window::showSearchResultsContextMenu(const QPoint &point)
+{
+	QTreeWidgetItem *item = treeFileSearchResults.itemAt(point);
+	if(item == nullptr)
+	{
+		return;
+	}
+	QMenu menu("Test", this);
+	menu.addAction("Copy filename to clipboard", [&] { QGuiApplication::clipboard()->setText(item->text(0));});
+	menu.addAction("Copy full path to clipboard", [&] {  QGuiApplication::clipboard()->setText(item->text(1)); });
+	menu.addAction("Open containing folder", [&] {
+		QFileInfo pathinfo(item->text(1));
+		QString dir = pathinfo.absolutePath();
+		QDesktopServices::openUrl(QUrl::fromLocalFile(dir));
+
+	});
+	menu.exec(QCursor::pos());
 }
 
 QVector<EntryPushButton*> Window::generateEntryButtons(const QVector<EntryConfig> &configs)
