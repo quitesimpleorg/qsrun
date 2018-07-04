@@ -29,6 +29,7 @@
 #include <QVector>
 #include <QThread>
 #include <QTreeWidget>
+#include <QLabel>
 #include "config.h"
 #include "entrypushbutton.h"
 #include "calculationengine.h"
@@ -41,10 +42,12 @@ class Window : public QWidget
         QThread searchThread;
         SearchWorker *searchWorker;
         CalculationEngine calcEngine;
+        QString calculationresult;
         QVector<EntryPushButton*> userEntryButtons;
         QVector<EntryPushButton*> systemEntryButtons;
         QVector<EntryPushButton *> buttonsInGrid;
         QTreeWidget treeFileSearchResults;
+        QLabel caluclationResultLabel;
         QString queuedFileSearch;
         QString queuedContentSearch;
 		void createGui();
@@ -70,6 +73,7 @@ class Window : public QWidget
         void handleCancelledSearch();
         void treeSearchItemActivated(QTreeWidgetItem *item, int i);
         void showSearchResultsContextMenu(const QPoint &point);
+        void showCalculationResultContextMenu(const QPoint &point);
     signals:
         void beginFileSearch(const QString &query);
         void beginContentSearch(const QString &query);

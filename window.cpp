@@ -40,6 +40,16 @@ Window::Window(const QVector<EntryConfig> &configs, const QString &dbpath)
 	searchThread.start();
 	initTreeWidgets();
 	this->lineEdit->installEventFilter(this);
+	QFont font;
+	font.setPointSize(48);
+	font.setBold(true);
+	calculationResultLabel.setFont(font);
+	calculationResultLabel.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+	calculationResultLabel.setAlignment(Qt::AlignCenter);
+	calculationResultLabel.setWordWrap(true);
+	calculationResultLabel.setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
+	connect(&calculationResultLabel, &QLabel::customContextMenuRequested, this, &Window::showCalculationResultContextMenu);
+
 
 }
 
@@ -71,7 +81,7 @@ void Window::showSearchResultsContextMenu(const QPoint &point)
 	{
 		return;
 	}
-	QMenu menu("Test", this);
+	QMenu menu("SearchResult", this);
 	menu.addAction("Copy filename to clipboard", [&] { QGuiApplication::clipboard()->setText(item->text(0));});
 	menu.addAction("Copy full path to clipboard", [&] {  QGuiApplication::clipboard()->setText(item->text(1)); });
 	menu.addAction("Open containing folder", [&] {
@@ -80,6 +90,14 @@ void Window::showSearchResultsContextMenu(const QPoint &point)
 		QDesktopServices::openUrl(QUrl::fromLocalFile(dir));
 
 	});
+	menu.exec(QCursor::pos());
+}
+
+void Window::showCalculationResultContextMenu(const QPoint &point)
+{
+	QMenu menu("Calc", this);
+	menu.addAction("Copy result", [&] { QGuiApplication::clipboard()->setText(currentCalculationResult); });
+	menu.addAction("Copy full content", [&] { QGuiApplication::clipboard()->setText(calculationResultLabel.text()); });
 	menu.exec(QCursor::pos());
 }
 
@@ -182,17 +200,10 @@ void Window::clearGrid()
 void Window::addCalcResult(const QString &expression)
 {
 	clearGrid();
-	QString calculationresult = calcEngine.evaluate(expression);
-	QLabel *lbl = new QLabel();
-	lbl->setText(expression + ": " + calculationresult);
-	lbl->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-	lbl->setAlignment(Qt::AlignCenter);
-	lbl->setWordWrap(true);
-	QFont font;
-	font.setPointSize(48);
-	font.setBold(true);
-	lbl->setFont(font);
-	grid->addWidget(lbl, 0, 0);
+	currentCalculationResult = calcEngine.evaluate(expression);
+	calculationResultLabel.setText(expression + ": " + currentCalculationResult);
+	calculationResultLabel.setVisible(true);
+	grid->addWidget(&calculationResultLabel, 0, 0);
 }
 
 //main problem here there is no easy event compression (clearing emit queue and only processing the last one)
