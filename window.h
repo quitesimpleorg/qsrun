@@ -47,7 +47,8 @@ class Window : public QWidget
         QVector<EntryPushButton*> systemEntryButtons;
         QVector<EntryPushButton *> buttonsInGrid;
         QTreeWidget treeFileSearchResults;
-        QLabel caluclationResultLabel;
+        QLabel calculationResultLabel;
+        QString currentCalculationResult;
         QString queuedFileSearch;
         QString queuedContentSearch;
 		void createGui();
