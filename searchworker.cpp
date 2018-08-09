@@ -13,7 +13,8 @@ SearchWorker::SearchWorker(const QString &dbpath)
 	queryContent = new QSqlQuery(db);
 	queryFile = new QSqlQuery(db);
 	queryFile->prepare("SELECT path FROM file WHERE path LIKE ? ORDER BY mtime DESC");
-	queryContent->prepare("SELECT file.path FROM file INNER JOIN file_fts ON file.id = file_fts.ROWID WHERE file_fts.content MATCH ? ORDER By file.mtime DESC");
+	
+	queryContent->prepare("SELECT DISTINCT file.path FROM file INNER JOIN content ON file.id = content.fileid INNER JOIN content_fts ON content.id = content_fts.ROWID WHERE content_fts.content MATCH ? ORDER By file.mtime DESC");
 }
 
 void SearchWorker::searchForFile(const QString &query)
