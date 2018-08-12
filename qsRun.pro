@@ -9,12 +9,10 @@ INCLUDEPATH += .
 # Input
 HEADERS += config.h window.h \
     entrypushbutton.h \
-    calculationengine.h \
-    searchworker.h
+    calculationengine.h
 SOURCES += config.cpp main.cpp window.cpp \
     entrypushbutton.cpp \
-    calculationengine.cpp \
-    searchworker.cpp
+    calculationengine.cpp
 QT += widgets sql
 QT_CONFIG -= no-pkg-config
 LIBS += -lcln

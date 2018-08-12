@@ -1,9 +1,7 @@
 qsRunner
 ========
 qsRunner is a launcher. It contains user defined entries for applications and also searches
-system-applications. Using libcalculate, it can also be used as a calculator. It
-can also search for files (and their contents) by querying a sqlite database, although it itself does
-not index files. 
+system-applications. Using libcalculate, it can also be used as a calculator.
 
 If you run a desktop environment like KDE it is questionable whether you will
 find this useful, since they usually bring applications that are more or less
@@ -16,7 +14,6 @@ Dependencies
 It has been only tested for Qt 5.7.
 
 For the calculation engine, libqalculate is needed.
-For file search, easyindex is necessary. 
 
 Currently no conditional compile flags are supported...
 
@@ -33,9 +30,6 @@ Config format
 Path: $HOME/.config/qsRunner/qsrunner.config
 
 ```
-[Search]
-dbpath="/path/to/database.sqlite"
-
 [General]
 systemApplicationsPath="/usr/share/applications/"
 ```
@@ -80,11 +74,3 @@ terminal.
 Calculator
 ----------
 Start by typing "=", followed by your expression, e. g: "=(2+3)^2"
-
-File searches
--------------
-It only queries a sqlite database. It does not index files, this is beyond the
-scope a launcher. For the file searches functionality, easyindex is necessary.
-See: git.quitesimple.org/easyindex.
-
-

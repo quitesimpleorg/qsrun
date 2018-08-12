@@ -26,19 +26,11 @@
 #include <QFileIconProvider>
 #include <QMenu>
 #include <QClipboard>
-Window::Window(const QVector<EntryConfig> &configs, const QString &dbpath)
+Window::Window(const QVector<EntryConfig> &configs)
 {
 	this->userEntryButtons = generateEntryButtons(configs);
 	createGui();
 	populateGrid(this->userEntryButtons);
-	searchWorker = new SearchWorker(dbpath);
-	searchWorker->moveToThread(&searchThread);
-	connect(this, &Window::beginFileSearch, searchWorker, &SearchWorker::searchForFile);
-	connect(this, &Window::beginContentSearch, searchWorker, &SearchWorker::searchForContent);
-	connect(searchWorker, &SearchWorker::searchResultsReady, this, &Window::handleSearchResults);
-	connect(searchWorker, &SearchWorker::searchCancelled, this, &Window::handleCancelledSearch);
-	searchThread.start();
-	initTreeWidgets();
 	this->lineEdit->installEventFilter(this);
 	QFont font;
 	font.setPointSize(48);
@@ -55,43 +47,14 @@ Window::Window(const QVector<EntryConfig> &configs, const QString &dbpath)
 
 Window::~Window()
 {
-   searchThread.quit();
-  searchThread.wait();
+
 
 }
 
-void Window::initTreeWidgets()
-{
-	QStringList headers;
-	headers << "Filename";
-	headers << "Path";
-	headers << "Modification time";
-	treeFileSearchResults.setHeaderLabels(headers);
-	treeFileSearchResults.header()->setSectionResizeMode(QHeaderView::ResizeToContents);
-	connect(&treeFileSearchResults, &QTreeWidget::itemActivated, this, &Window::treeSearchItemActivated);
-	treeFileSearchResults.setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
-	connect(&treeFileSearchResults, &QTreeWidget::customContextMenuRequested, this, &Window::showSearchResultsContextMenu);
-}
 
 
-void Window::showSearchResultsContextMenu(const QPoint &point)
-{
-	QTreeWidgetItem *item = treeFileSearchResults.itemAt(point);
-	if(item == nullptr)
-	{
-		return;
-	}
-	QMenu menu("SearchResult", this);
-	menu.addAction("Copy filename to clipboard", [&] { QGuiApplication::clipboard()->setText(item->text(0));});
-	menu.addAction("Copy full path to clipboard", [&] {  QGuiApplication::clipboard()->setText(item->text(1)); });
-	menu.addAction("Open containing folder", [&] {
-		QFileInfo pathinfo(item->text(1));
-		QString dir = pathinfo.absolutePath();
-		QDesktopServices::openUrl(QUrl::fromLocalFile(dir));
 
-	});
-	menu.exec(QCursor::pos());
-}
+
 
 void Window::showCalculationResultContextMenu(const QPoint &point)
 {
@@ -217,34 +180,6 @@ void Window::lineEditTextChanged(QString text)
 
 			addCalcResult(input);
 			return;
-		}
-		if(text[0] == '/')
-		{
-			if(searchWorker->isOperationPending())
-			{
-				this->queuedFileSearch = input;
-				searchWorker->requestCancellation();
-			}
-			else
-			{
-				this->queuedFileSearch = "";
-				emit beginFileSearch(input);
-			}
-		 return;
-		}
-		if(text[0] == '|')
-		{
-			if(searchWorker->isOperationPending())
-			{
-				this->queuedContentSearch = input;
-				searchWorker->requestCancellation();
-			}
-			else
-			{
-				this->queuedContentSearch = "";
-				emit beginContentSearch(input);
-			}
-				return;
 		}
 	}
 
@@ -384,10 +319,6 @@ void Window::lineEditReturnPressed()
 		buttonClick(*buttonsInGrid[0]);
 		return;
 	}
-	if(this->isSearchMode())
-	{
-		treeSearchItemActivated(treeFileSearchResults.topLevelItem(0), 0);
-	}
 }
 
 void Window::setSystemConfig(const QVector<EntryConfig> &config)
@@ -395,51 +326,7 @@ void Window::setSystemConfig(const QVector<EntryConfig> &config)
 	this->systemEntryButtons = generateEntryButtons(config);
 }
 
-void Window::handleSearchResults(const QVector<QString> &results)
-{
-	clearGrid();
-	treeFileSearchResults.clear();
-	QFileIconProvider provider;
-	for(const QString &path : results)
-	{
-		QFileInfo pathInfo(path);
-		QString fileName =pathInfo.fileName();
-		QString absPath = path;
-		QString datestr = pathInfo.lastModified().toString(Qt::ISODate);
-		QTreeWidgetItem *item = new QTreeWidgetItem(&treeFileSearchResults);
-		item->setText(0, fileName);
-		item->setIcon(0, provider.icon(pathInfo));
-		item->setText(1, absPath);
-		item->setText(2, datestr);
 
-	}
-	treeFileSearchResults.resizeColumnToContents(0);
-	treeFileSearchResults.resizeColumnToContents(2);
-	treeFileSearchResults.setVisible(true);
-
-	this->grid->addWidget(&treeFileSearchResults, 0, 0);
-}
-
-void Window::handleCancelledSearch()
-{
-	if(this->queuedFileSearch != "")
-	{
-		QString searchFor = this->queuedFileSearch;
-		this->queuedFileSearch = "";
-		emit beginFileSearch(searchFor);
-	}
-	if(this->queuedContentSearch != "")
-	{
-		QString searchFor = this->queuedContentSearch;
-		this->queuedContentSearch = "";
-		emit beginContentSearch(searchFor);
-	}
-}
-
-void Window::treeSearchItemActivated(QTreeWidgetItem *item, int i)
-{
-	QDesktopServices::openUrl(QUrl::fromLocalFile(item->text(1)));
-}
 
 
 bool Window::eventFilter(QObject *obj, QEvent *event)
@@ -468,8 +355,3 @@ bool Window::eventFilter(QObject *obj, QEvent *event)
 
 }
 
-bool Window::isSearchMode()
-{
-	QChar c = this->lineEdit->text()[0];
-	return c == '/' || c == '|';
-}

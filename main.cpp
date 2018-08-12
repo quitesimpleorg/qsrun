@@ -44,7 +44,6 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 	QSettings settings(configDirectoryPath + "qsrun.config", QSettings::NativeFormat);
-	QString dbpath = settings.value("Search/dbpath").toString();
 	QString systemApplicationsPath = settings.value("General/systemApplicationsPath", "/usr/share/applications/").toString();
 
 	QVector<EntryConfig> configs;
@@ -59,7 +58,7 @@ int main(int argc, char *argv[])
 		std::cerr << e.what() << std::endl;
 	}
 
-	Window w(configs, dbpath);
+	Window w(configs);
 
 	/*
 	 * TODO: Reconsider the need

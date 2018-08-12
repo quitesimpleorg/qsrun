@@ -33,20 +33,16 @@
 #include "config.h"
 #include "entrypushbutton.h"
 #include "calculationengine.h"
-#include "searchworker.h"
 
 class Window : public QWidget
 {
 	Q_OBJECT
 	private:
-        QThread searchThread;
-        SearchWorker *searchWorker;
         CalculationEngine calcEngine;
         QString calculationresult;
         QVector<EntryPushButton*> userEntryButtons;
         QVector<EntryPushButton*> systemEntryButtons;
         QVector<EntryPushButton *> buttonsInGrid;
-        QTreeWidget treeFileSearchResults;
         QLabel calculationResultLabel;
         QString currentCalculationResult;
         QString queuedFileSearch;
@@ -67,19 +63,11 @@ class Window : public QWidget
         void addCalcResult(const QString & expression);
         void initTreeWidgets();
         QStringList generatePATHSuggestions(const QString &text);
-        bool isSearchMode();
     private slots:
         void lineEditReturnPressed();
-        void handleSearchResults(const QVector<QString> &results);
-        void handleCancelledSearch();
-        void treeSearchItemActivated(QTreeWidgetItem *item, int i);
-        void showSearchResultsContextMenu(const QPoint &point);
         void showCalculationResultContextMenu(const QPoint &point);
-    signals:
-        void beginFileSearch(const QString &query);
-        void beginContentSearch(const QString &query);
 	public:
-        Window(const QVector<EntryConfig> &userEntryButtons, const QString &dbpath);
+        Window(const QVector<EntryConfig> &userEntryButtons);
         void setSystemConfig(const QVector<EntryConfig> &config);
         bool eventFilter(QObject *obj, QEvent *event);
         ~Window();

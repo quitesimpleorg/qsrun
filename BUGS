@@ -1,2 +1,1 @@
-SearchWorker: isPending etc. may need proper locking (with mutexes)
 Memory leaks(ignored for now due to short-running nature of the application)
