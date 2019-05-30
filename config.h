@@ -40,12 +40,12 @@ class EntryConfig
 class ConfigReader
 {
 	private:
-		QString configDirectory;
+        QStringList configPaths;
 		EntryConfig readFromFile(const QString &path);
 		EntryConfig readFromDesktopFile(const QString &path);
 		QStringList desktopIgnoreArgs;
 	public:
-		ConfigReader(QString path);
+        ConfigReader(QStringList paths);
         QVector<EntryConfig> readConfig();
 };
 

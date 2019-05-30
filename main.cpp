@@ -37,20 +37,18 @@ int main(int argc, char *argv[])
 	}
 	qRegisterMetaType<QVector<QString> >("QVector<QString>");
 	
-	QDir dir(configDirectoryPath);
+	QDir dir;
 	if(!dir.exists(configDirectoryPath))
 	{
 		QMessageBox::warning(nullptr, "Directory not found", configDirectoryPath + " was not found!");
 		return 1;
 	}
 	QSettings settings(configDirectoryPath + "qsrun.config", QSettings::NativeFormat);
-	QString systemApplicationsPath = settings.value("General/systemApplicationsPath", "/usr/share/applications/").toString();
-
 	QVector<EntryConfig> configs;
 
 	try
 	{
-		ConfigReader reader(configDirectoryPath);
+		ConfigReader reader({configDirectoryPath});
 		configs = reader.readConfig();
 	}
 	catch(std::exception &e)
@@ -59,23 +57,10 @@ int main(int argc, char *argv[])
 	}
 
 	Window w(configs);
-
-	/*
-	 * TODO: Reconsider the need
-	 * QFuture<void> future = QtConcurrent::run([&w] {
-			ConfigReader systemConfigReader("/usr/share/applications/");
-			QList<EntryConfig> systemconfigs = systemConfigReader.readConfig();
-			if(systemconfigs.count() > 0)
-			{
-				w.setSystemConfig(systemconfigs);
-				w.systemConfigReady();
-			}
-		 });*/
-
-
 	try
 	{
-		ConfigReader systemConfigReader(systemApplicationsPath);
+		QStringList systemApplicationsPaths = settings.value("sysAppsPaths", "/usr/share/applications/").toStringList();
+		ConfigReader systemConfigReader(systemApplicationsPaths);
 		QVector<EntryConfig> systemconfigs = systemConfigReader.readConfig();
 		if(systemconfigs.count() > 0)
 		{

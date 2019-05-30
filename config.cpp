@@ -18,9 +18,10 @@
 #include <QDebug>
 #include <QTextStream>
 
-ConfigReader::ConfigReader(QString directory)
+
+ConfigReader::ConfigReader(QStringList paths)
 {
-	this->configDirectory = directory;
+	this->configPaths = paths;
 	desktopIgnoreArgs << "%F" << "%f" << "%U" << "%u";
 }
 
@@ -153,24 +154,28 @@ EntryConfig ConfigReader::readFromFile(const QString &path)
 QVector<EntryConfig> ConfigReader::readConfig()
 {
 	QVector<EntryConfig> result;
-	QDirIterator it(this->configDirectory);
-	while(it.hasNext())
+	for(QString &configPath : configPaths)
 	{
-		QString path = it.next();
-		QFileInfo info(path);
-		if(info.isFile())
+		QDirIterator it(configPath);
+		while(it.hasNext())
 		{
-			QString suffix = info.completeSuffix();
-			if(suffix == "desktop")
+			QString path = it.next();
+			QFileInfo info(path);
+			if(info.isFile())
 			{
-				result.append(readFromDesktopFile(path));
+				QString suffix = info.completeSuffix();
+				if(suffix == "desktop")
+				{
+					result.append(readFromDesktopFile(path));
 
-			}
-			if(suffix == "qsrun")
-			{
-				result.append(readFromFile(path));
+				}
+				if(suffix == "qsrun")
+				{
+					result.append(readFromFile(path));
+				}
 			}
 		}
+
 	}
 	
 	return result;
