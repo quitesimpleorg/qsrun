@@ -38,7 +38,6 @@ Window::Window(const QVector<EntryConfig> &configs)
 	calculationResultLabel.setFont(font);
 	calculationResultLabel.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	calculationResultLabel.setAlignment(Qt::AlignCenter);
-	calculationResultLabel.setWordWrap(true);
 	calculationResultLabel.setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
 	connect(&calculationResultLabel, &QLabel::customContextMenuRequested, this, &Window::showCalculationResultContextMenu);
 
@@ -164,8 +163,30 @@ void Window::addCalcResult(const QString &expression)
 {
 	clearGrid();
 	currentCalculationResult = calcEngine.evaluate(expression);
-	calculationResultLabel.setText(expression + ": " + currentCalculationResult);
+	QString labelText = expression + ": " + currentCalculationResult;
+	calculationResultLabel.setText(labelText);
 	calculationResultLabel.setVisible(true);
+
+
+	QFont currentFont = calculationResultLabel.font();
+	int calculatedPointSize = currentFont.pointSize();
+	QFontMetrics fm(currentFont);
+	int contentWidth = calculationResultLabel.contentsRect().width() - calculationResultLabel.margin();
+	while(calculatedPointSize < 48 &&  fm.boundingRect(labelText).width() < contentWidth)
+	{
+		calculatedPointSize += 1;
+		currentFont.setPointSize(calculatedPointSize);
+		fm = QFontMetrics(currentFont);
+	}
+	while(fm.boundingRect(labelText).width() >= contentWidth)
+	{
+		calculatedPointSize -= 1;
+		currentFont.setPointSize(calculatedPointSize);
+		fm = QFontMetrics(currentFont);
+	}
+
+	calculationResultLabel.setFont(currentFont);
+
 	grid->addWidget(&calculationResultLabel, 0, 0);
 }
 
