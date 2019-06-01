@@ -57,6 +57,7 @@ int EntryPushButton::getRow() const { return config.row; }
 int EntryPushButton::getCol() const { return config.col; }
 QString EntryPushButton::getName() const { return config.name; }
 QString EntryPushButton::getShortcutKey() const { return config.key; }
+void EntryPushButton::setShortcutKey(QString key) { this->config.key = key; }
 void EntryPushButton::setRow(int row) { this->config.row = row; }
 void EntryPushButton::setCol(int col) { this->config.col = col; }
 QStringList EntryPushButton::getArguments() const { return this->config.arguments; }

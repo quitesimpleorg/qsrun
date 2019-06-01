@@ -269,8 +269,8 @@ void Window::keyPressEvent(QKeyEvent *event)
 		QKeySequence seq(event->key());
 		QString key = seq.toString().toLower();
 		
-		auto it = std::find_if(userEntryButtons.begin(), userEntryButtons.end(), [&key](const EntryPushButton *y) { return y->getShortcutKey() == key; });
-		if(it != userEntryButtons.end())
+		auto it = std::find_if(buttonsInGrid.begin(), buttonsInGrid.end(), [&key](const EntryPushButton *y) { return y->getShortcutKey() == key; });
+		if(it != buttonsInGrid.end())
 		{
 			buttonClick(**it);
 		}
@@ -304,7 +304,10 @@ void Window::filterGridFor(QString filter)
 				if(button->getName().contains(filter, Qt::CaseInsensitive))
 				{
 					button->setVisible(true);
-					button->setShortcut(QString::number(i++));
+					if(i < 10)
+					{
+						button->setShortcutKey(QString::number(i++));
+					}
 					grid->addWidget(button, currow, curcol++);
 					this->buttonsInGrid.append(button);
 					if(curcol == 3)

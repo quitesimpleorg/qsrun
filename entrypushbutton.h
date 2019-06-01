@@ -43,6 +43,7 @@ public:
     QString getCommand() const;
     void setRow(int row);
     void setCol(int col);
+    void setShortcutKey(QString key);
 
 
 };
