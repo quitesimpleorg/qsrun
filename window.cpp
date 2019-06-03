@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#include "window.h"
 #include <QProcess>
 #include <QProcessEnvironment>
 #include <QDirIterator>
@@ -26,11 +25,13 @@
 #include <QFileIconProvider>
 #include <QMenu>
 #include <QClipboard>
-Window::Window(const QVector<EntryConfig> &configs)
+#include "window.h"
+#include "configprovider.h"
+Window::Window(ConfigProvider &configProvider)
 {
-	this->userEntryButtons = generateEntryButtons(configs);
+	this->configProvider = &configProvider;
 	createGui();
-	populateGrid(this->userEntryButtons);
+	initFromConfig();
 	this->lineEdit->installEventFilter(this);
 	QFont font;
 	font.setPointSize(48);
@@ -53,7 +54,12 @@ Window::~Window()
 
 
 
-
+void Window::initFromConfig()
+{
+	this->userEntryButtons = generateEntryButtons(configProvider->getUserEntries());
+	this->systemEntryButtons = generateEntryButtons(configProvider->getSystemEntries());
+	populateGrid(this->userEntryButtons);
+}
 
 void Window::showCalculationResultContextMenu(const QPoint &point)
 {
@@ -100,7 +106,15 @@ void Window::populateGrid(const QVector<EntryPushButton *> &list)
 void Window::buttonClick(const EntryPushButton &config)
 {
 	QProcess::startDetached(config.getCommand(), config.getArguments());
-	qApp->quit();
+	if(configProvider->singleInstanceMode())
+	{
+		this->lineEdit->setText("");
+		hide();
+	}
+	else
+	{
+		qApp->quit();
+	}
 }
 
 QStringList Window::generatePATHSuggestions(const QString &text)
@@ -154,7 +168,6 @@ void Window::clearGrid()
 		auto item = grid->itemAt(0)->widget();
 		grid->removeWidget(item);
 		item->setVisible(false);
-
 	}
 	buttonsInGrid.clear();
 }
@@ -202,6 +215,7 @@ void Window::lineEditTextChanged(QString text)
 			addCalcResult(input);
 			return;
 		}
+
 	}
 
 	filterGridFor(text);
@@ -338,6 +352,14 @@ EntryPushButton * Window::createEntryButton(const EntryConfig &entry)
 
 void Window::lineEditReturnPressed()
 {
+	if(this->lineEdit->text() == "/reload")
+	{
+		initFromConfig();
+		this->lineEdit->setText("");
+		return;
+	}
+
+
 	if(buttonsInGrid.length() > 0 && this->lineEdit->text().length() > 0 )
 	{
 		buttonClick(*buttonsInGrid[0]);

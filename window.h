@@ -33,11 +33,13 @@
 #include "config.h"
 #include "entrypushbutton.h"
 #include "calculationengine.h"
+#include "configprovider.h"
 
 class Window : public QWidget
 {
 	Q_OBJECT
 	private:
+        ConfigProvider *configProvider;
         CalculationEngine calcEngine;
         QString calculationresult;
         QVector<EntryPushButton*> userEntryButtons;
@@ -47,6 +49,7 @@ class Window : public QWidget
         QString currentCalculationResult;
         QString queuedFileSearch;
         QString queuedContentSearch;
+        void initFromConfig();
 		void createGui();
         void filterGridFor(QString filter);
         void populateGrid(const QVector<EntryPushButton *> &list);
@@ -67,7 +70,7 @@ class Window : public QWidget
         void lineEditReturnPressed();
         void showCalculationResultContextMenu(const QPoint &point);
 	public:
-        Window(const QVector<EntryConfig> &userEntryButtons);
+        Window(ConfigProvider &configProvider);
         void setSystemConfig(const QVector<EntryConfig> &config);
         bool eventFilter(QObject *obj, QEvent *event);
         ~Window();
