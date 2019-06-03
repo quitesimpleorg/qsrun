@@ -18,7 +18,10 @@
 #include <QFutureWatcher>
 #include <QtConcurrent/QtConcurrentRun>
 #include <QSettings>
+#include <QLocalSocket>
+#include "configprovider.h"
 #include "window.h"
+#include "singleinstanceserver.h"
 
 
 
@@ -36,44 +39,52 @@ int main(int argc, char *argv[])
 		configDirectoryPath = QDir::homePath() + "/.config/qsRun/";
 	}
 	qRegisterMetaType<QVector<QString> >("QVector<QString>");
-	
+
+
 	QDir dir;
 	if(!dir.exists(configDirectoryPath))
 	{
 		QMessageBox::warning(nullptr, "Directory not found", configDirectoryPath + " was not found!");
 		return 1;
 	}
+
 	QSettings settings(configDirectoryPath + "qsrun.config", QSettings::NativeFormat);
-	QVector<EntryConfig> configs;
 
-	try
+	ConfigProvider configProvider(configDirectoryPath, settings);
+	//TODO if setting single instance mode
+	QLocalSocket localSocket;
+	localSocket.connectToServer("/tmp/qsrun.socket");
+	SingleInstanceServer server;
+	if(localSocket.isOpen() && localSocket.isWritable())
 	{
-		ConfigReader reader({configDirectoryPath});
-		configs = reader.readConfig();
+		QDataStream stream(&localSocket);
+		stream << (int)0x01; //maximize
+		localSocket.flush();
+		localSocket.waitForBytesWritten();
+		localSocket.disconnectFromServer();
+		return 0;
 	}
-	catch(std::exception &e)
+	else
 	{
-		std::cerr << e.what() << std::endl;
-	}
-
-	Window w(configs);
-	try
-	{
-		QStringList systemApplicationsPaths = settings.value("sysAppsPaths", "/usr/share/applications/").toStringList();
-		ConfigReader systemConfigReader(systemApplicationsPaths);
-		QVector<EntryConfig> systemconfigs = systemConfigReader.readConfig();
-		if(systemconfigs.count() > 0)
+		if(!server.listen("/tmp/qsrun.socket"))
 		{
-			w.setSystemConfig(systemconfigs);
+			qDebug() << "Failed to listen on socket!";
 		}
-	}
-	catch(std::exception &e)
-	{
-		std::cerr << e.what() << std::endl;
-	}
-	
-	
+		Window *w = new Window { configProvider };
+		QObject::connect(&server, &SingleInstanceServer::receivedMaximizationRequest, [&w]{
+					if(w != nullptr)
+					{
+						qInfo() << "maximizing as requested by other instance";
+						w->showMaximized();
+						w->activateWindow();
+						w->raise();
+					}
+				});
+		w->showMaximized();
 
-	w.showMaximized();
+	}
+
+
+
 	return app.exec();
 }
