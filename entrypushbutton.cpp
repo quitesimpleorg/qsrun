@@ -20,7 +20,10 @@ EntryPushButton::EntryPushButton(const EntryConfig &config) : QPushButton()
 	this->setText(config.name);
 	this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	this->setIcon(config.icon);
-	this->setIconSize(config.icon.availableSizes().first());
+	if(!config.icon.availableSizes().isEmpty())
+	{
+		this->setIconSize(config.icon.availableSizes().first());
+	}
 	this->config = config;
 	connect(this, SIGNAL(clicked()), this, SLOT(emitOwnClicked()));
 }
