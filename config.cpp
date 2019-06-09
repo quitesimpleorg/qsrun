@@ -46,7 +46,7 @@ EntryConfig ConfigReader::readFromDesktopFile(const QString &path)
 	}
 	if(firstline != "[Desktop Entry]")
 	{
-		throw new ConfigFormatException(".desktop file does not start with [Desktop Entry]");
+		throw ConfigFormatException(".desktop file does not start with [Desktop Entry]");
 	}
 
 	while(!stream.atEnd())
@@ -114,12 +114,39 @@ EntryConfig ConfigReader::readFromFile(const QString &path)
 		QStringList splitted = line.split(" ");
 		if(splitted.length() < 2)
 		{
-			throw new ConfigFormatException("misformated line in .qsrun config file");
+			throw new ConfigFormatException("misformated line in .qsrun config file " + path.toStdString());
 		}
 		QString key = splitted[0];
 		if(key == "arguments")
 		{
-			result.arguments = splitted.mid(1);
+			auto args = splitted.mid(1);
+			QString merged;
+			for(QString &str : args)
+			{
+				if(str.startsWith('"') && !str.endsWith("'"))
+				{
+					merged += str.mid(1) + " ";
+				}
+				else if(str.endsWith('"'))
+				{
+					str.chop(1);
+					merged += str;
+					result.arguments.append(merged);
+					merged = "";
+				}
+				else if(merged != "")
+				{
+					merged += str + " ";
+				}
+				else
+				{
+					result.arguments.append(str);
+				}
+			}
+			if(merged != "")
+			{
+				throw ConfigFormatException("non-closed \" in config file " + path.toStdString());
+			}
 		}
 		if(key == "name")
 		{
