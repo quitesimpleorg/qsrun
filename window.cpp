@@ -23,6 +23,7 @@
 #include <QHeaderView>
 #include <QDesktopServices>
 #include <QFileIconProvider>
+#include <QDebug>
 #include <QMenu>
 #include <QClipboard>
 #include "window.h"
@@ -56,8 +57,18 @@ Window::~Window()
 
 void Window::initFromConfig()
 {
-	this->userEntryButtons = generateEntryButtons(configProvider->getUserEntries());
-	this->systemEntryButtons = generateEntryButtons(configProvider->getSystemEntries());
+	try
+	{
+		this->userEntryButtons = generateEntryButtons(configProvider->getUserEntries());
+		this->systemEntryButtons = generateEntryButtons(configProvider->getSystemEntries());
+	}
+	catch(const ConfigFormatException &e)
+	{
+		qDebug() << "Config is misformated: " << e.what();
+		QMessageBox::critical(this, "Misformated config file", e.what());
+		qApp->quit();
+	}
+
 	populateGrid(this->userEntryButtons);
 }
 
