@@ -1,17 +1,17 @@
-qsRunner
+qsRun
 ========
-qsRunner is a launcher. It contains user defined entries for applications and also searches
+qsRun is a launcher. It contains user defined entries for applications and also searches
 system-applications. Using libcalculate, it can also be used as a calculator.
 
 If you run a desktop environment like KDE it is questionable whether you will
 find this useful, since they usually bring applications that are more or less
-comparable to qsRunner, although much more
+comparable to qsRun, although much more
 powerful  (like KRunner). It can be useful for users running a window manager like
 fluxbox etc.
 
 Dependencies
 ------------
-It has been only tested for Qt 5.7.
+Qt >=5.7.
 
 For the calculation engine, libqalculate is needed.
 
@@ -22,16 +22,16 @@ Getting started
 Currently it may not be considered a classical GUI application because the  
 configuration must be done outside of it.  
 
-mkdir $HOME/.config/qsRunner
+mkdir $HOME/.config/qsRun
 In this folder user-defined entries should be put (See "Entry format").
 
 Config format
 ------------
-Path: $HOME/.config/qsRunner/qsrunner.config
+Path: $HOME/.config/qsRun/qsrunner.config
 
 ```
 [General]
-systemApplicationsPath="/usr/share/applications/"
+sysAppsPaths="/usr/share/applications/" TODO: multiple dir example
 ```
 
 systemApplicationsPath will default to "/usr/share/applications/",
