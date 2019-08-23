@@ -36,17 +36,17 @@ EntryConfig ConfigReader::readFromDesktopFile(const QString &path)
 		throw new std::runtime_error("Failed to open file");
 	}
 	QTextStream stream(&file);
-	QString firstline = stream.readLine();
-	
-	//There should be nothing preceding this group in the desktop entry file but possibly one or more comments. 
+	//There should be nothing preceding this group in the desktop entry file but possibly one or more comments.
 	//https://standards.freedesktop.org/desktop-entry-spec/latest/ar01s03.html#group-header
-	while(firstline[0] == '#' && !stream.atEnd())
+	QString firstLine;
+	do
 	{
-		firstline = stream.readLine();
-	}
-	if(firstline != "[Desktop Entry]")
+		firstLine = stream.readLine().trimmed();
+	} while(!stream.atEnd() && ( firstLine.isEmpty() || firstLine[0] == '#') );
+
+	if(firstLine != "[Desktop Entry]")
 	{
-		throw ConfigFormatException(".desktop file does not start with [Desktop Entry]");
+		throw ConfigFormatException(".desktop file does not start with [Desktop Entry]: " + path.toStdString());
 	}
 
 	while(!stream.atEnd())
@@ -57,41 +57,40 @@ EntryConfig ConfigReader::readFromDesktopFile(const QString &path)
 		{
 			return result;
 		}
-		QStringList splitted = line.split("=");
-		if(splitted.length() >= 2)
-		{
-			QString key = splitted[0].toLower();
-			if(key == "name")
-			{
-				if(result.name.length() == 0)
-				{
-					result.name = splitted[1];
-				}
-			}
-			if(key == "icon")
-			{
-				result.icon = QIcon::fromTheme(splitted[1]);
-			}
-			if(key == "exec")
-			{
-				QStringList arguments = splitted[1].split(" ");
 
-				result.command = arguments[0];
-				arguments = arguments.mid(1);
-				if(arguments.length() > 1)
+		QString key = line.section('=',0,0).toLower();
+		QString args = line.section('=', 1);
+		if(key == "name")
+		{
+			if(result.name.length() == 0)
+			{
+				result.name = args;
+			}
+		}
+		if(key == "icon")
+		{
+			result.icon = QIcon::fromTheme(args);
+		}
+		if(key == "exec")
+		{
+			QStringList arguments = args.split(" ");
+
+			result.command = arguments[0];
+			arguments = arguments.mid(1);
+			if(arguments.length() > 1)
+			{
+				for(QString &arg : arguments)
 				{
-					for(QString &arg : arguments)
+					if(!desktopIgnoreArgs.contains(arg))
 					{
-						if(!desktopIgnoreArgs.contains(arg))
-						{
-							result.arguments.append(arg);
-						}
+						result.arguments.append(arg);
 					}
 				}
 			}
-	
+
+
 		}
-		
+
 	}
 
 	return result;
