@@ -3,7 +3,7 @@
 ######################################################################
 
 TEMPLATE = app
-TARGET = qsRun
+TARGET = qsrun
 INCLUDEPATH += .
 
 # Input

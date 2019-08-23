@@ -1,11 +1,11 @@
-qsRun
+qsrun
 ========
-qsRun is a launcher. It contains user defined entries for applications and also searches
+qsrun is a launcher. It contains user defined entries for applications and also searches
 system-applications. Using libcalculate, it can also be used as a calculator.
 
 If you run a desktop environment like KDE it is questionable whether you will
 find this useful, since they usually bring applications that are more or less
-comparable to qsRun, although much more
+comparable to qsrun, although much more
 powerful  (like KRunner). It can be useful for users running a window manager like
 fluxbox etc.
 
@@ -17,17 +17,24 @@ For the calculation engine, libqalculate is needed.
 
 Currently no conditional compile flags are supported...
 
+Building
+========
+qmake 
+make
+
+
+
 Getting started
 ----------------
 Currently it may not be considered a classical GUI application because the  
 configuration must be done outside of it.  
 
-mkdir $HOME/.config/qsRun
+mkdir $HOME/.config/qsrun
 In this folder user-defined entries should be put (See "Entry format").
 
 Config format
 ------------
-Path: $HOME/.config/qsRun/qsrunner.config
+Path: $HOME/.config/qsrun/qsrunner.config
 
 ```
 [General]

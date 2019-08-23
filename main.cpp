@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		configDirectoryPath = QDir::homePath() + "/.config/qsRun/";
+		configDirectoryPath = QDir::homePath() + "/.config/qsrun/";
 	}
 	qRegisterMetaType<QVector<QString> >("QVector<QString>");
 
