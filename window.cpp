@@ -26,6 +26,7 @@
 #include <QDebug>
 #include <QMenu>
 #include <QClipboard>
+#include <QScrollArea>
 #include "window.h"
 #include "configprovider.h"
 Window::Window(ConfigProvider &configProvider)
@@ -93,14 +94,20 @@ QVector<EntryPushButton*> Window::generateEntryButtons(const QVector<EntryConfig
 
 void Window::createGui()
 {
-	QVBoxLayout *vbox = new QVBoxLayout(this);
-	grid = new QGridLayout();
-	lineEdit = new QLineEdit();
-	vbox->setAlignment(Qt::AlignTop);
-	vbox->addWidget(lineEdit);
-	vbox->addLayout(grid);
-	connect(lineEdit, &QLineEdit::textChanged, this, [this](QString newtext) { this->lineEditTextChanged(newtext); });
-	connect(lineEdit, &QLineEdit::returnPressed, this, &Window::lineEditReturnPressed);
+  QVBoxLayout *vbox = new QVBoxLayout(this);
+  QScrollArea *sa = new QScrollArea;
+  grid = new QGridLayout();
+  lineEdit = new QLineEdit();
+  QWidget *w = new QWidget(this);
+  w->setLayout(grid);
+  sa->setWidget(w);
+  sa->setWidgetResizable(true);
+  vbox->setAlignment(Qt::AlignTop);
+  vbox->addWidget(lineEdit);
+  vbox->addWidget(sa);
+
+  connect(lineEdit, &QLineEdit::textChanged, this, [this](QString newtext) { this->lineEditTextChanged(newtext); });
+  connect(lineEdit, &QLineEdit::returnPressed, this, &Window::lineEditReturnPressed);
 }
 
 void Window::populateGrid(const QVector<EntryPushButton *> &list)
