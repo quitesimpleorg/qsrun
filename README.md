@@ -18,31 +18,31 @@ For the calculation engine, libqalculate is needed.
 Currently no conditional compile flags are supported...
 
 Building
-========
+--------
+Assuming the necessary dependencies are installed:
+
+```
 qmake 
 make
-
-
+```
 
 Getting started
 ----------------
-Currently it may not be considered a classical GUI application because the  
-configuration must be done outside of it.  
-
-mkdir $HOME/.config/qsrun
+$HOME/.config/qsrun
 In this folder user-defined entries should be put (See "Entry format").
 
 Config format
 ------------
-Path: $HOME/.config/qsrun/qsrunner.config
+Path: $HOME/.config/qsrun/qsrun.config
 
+Example:
 ```
 [General]
-sysAppsPaths="/usr/share/applications/" TODO: multiple dir example
+sysAppsPaths = "/usr/share/applications/", "/var/lib/snapd/desktop/applications/"
 ```
 
-systemApplicationsPath will default to "/usr/share/applications/",
-therefore specifying it explicitly is not necessary. 
+sysAppsPaths will default to "/usr/share/applications/" if no value
+is given. 
 
 Entry format
 ------------
