@@ -18,11 +18,12 @@
 
 CalculationEngine::CalculationEngine()
 {
-	if (!CALCULATOR) {
-		   new Calculator();
-		   CALCULATOR->terminateThreads();
-			CALCULATOR->setPrecision(16);
-   }
+	if (!CALCULATOR)
+	{
+		new Calculator();
+		CALCULATOR->terminateThreads();
+		CALCULATOR->setPrecision(16);
+	}
 
 	//stolen from krunner's qalculate engine
 	/*eo.auto_post_conversion = POST_CONVERSION_BEST;
@@ -50,8 +51,6 @@ QString CalculationEngine::evaluate(const QString &expression)
 	QByteArray ba = expression.toLatin1();
 	const char *ctext = ba.data();
 	MathStructure result = CALCULATOR->calculate(ctext, this->eo);
-	 result.format(po);
+	result.format(po);
 	return result.print(po).c_str();
-
-
 }

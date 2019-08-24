@@ -157,7 +157,7 @@ EntryConfig ConfigReader::readFromFile(const QString &path)
 		}
 		if(key == "row")
 		{
-			result.row = splitted[1].toInt(); 
+			result.row = splitted[1].toInt();
 		}
 		if(key == "col")
 		{

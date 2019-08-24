@@ -38,42 +38,42 @@
 class Window : public QWidget
 {
 	Q_OBJECT
-	private:
-        ConfigProvider *configProvider;
-        CalculationEngine calcEngine;
-        QString calculationresult;
-        QVector<EntryPushButton*> userEntryButtons;
-        QVector<EntryPushButton*> systemEntryButtons;
-        QVector<EntryPushButton *> buttonsInGrid;
-        QLabel calculationResultLabel;
-        QString currentCalculationResult;
-        QString queuedFileSearch;
-        QString queuedContentSearch;
-        void initFromConfig();
-		void createGui();
-        void filterGridFor(QString filter);
-        void populateGrid(const QVector<EntryPushButton *> &list);
-		void keyReleaseEvent(QKeyEvent *event);
-        QVector<EntryPushButton *> generateEntryButtons(const QVector<EntryConfig> &userEntryButtons);
-        void keyPressEvent(QKeyEvent *event);
-        void buttonClick(const EntryPushButton &config);
-		QLineEdit *lineEdit;
-		QGridLayout *grid;
-        EntryPushButton *createEntryButton(const EntryConfig &config);
-		void lineEditTextChanged(QString text);
-        void addPATHSuggestion(const QString &text);
-        void clearGrid();
-        void addCalcResult(const QString & expression);
-        void initTreeWidgets();
-        QStringList generatePATHSuggestions(const QString &text);
-    private slots:
-        void lineEditReturnPressed();
-        void showCalculationResultContextMenu(const QPoint &point);
-	public:
-        Window(ConfigProvider &configProvider);
-        void setSystemConfig(const QVector<EntryConfig> &config);
-        bool eventFilter(QObject *obj, QEvent *event);
-        ~Window();
+private:
+	ConfigProvider *configProvider;
+	CalculationEngine calcEngine;
+	QString calculationresult;
+	QVector<EntryPushButton*> userEntryButtons;
+	QVector<EntryPushButton*> systemEntryButtons;
+	QVector<EntryPushButton *> buttonsInGrid;
+	QLabel calculationResultLabel;
+	QString currentCalculationResult;
+	QString queuedFileSearch;
+	QString queuedContentSearch;
+	void initFromConfig();
+	void createGui();
+	void filterGridFor(QString filter);
+	void populateGrid(const QVector<EntryPushButton *> &list);
+	void keyReleaseEvent(QKeyEvent *event);
+	QVector<EntryPushButton *> generateEntryButtons(const QVector<EntryConfig> &userEntryButtons);
+	void keyPressEvent(QKeyEvent *event);
+	void buttonClick(const EntryPushButton &config);
+	QLineEdit *lineEdit;
+	QGridLayout *grid;
+	EntryPushButton *createEntryButton(const EntryConfig &config);
+	void lineEditTextChanged(QString text);
+	void addPATHSuggestion(const QString &text);
+	void clearGrid();
+	void addCalcResult(const QString & expression);
+	void initTreeWidgets();
+	QStringList generatePATHSuggestions(const QString &text);
+private slots:
+	void lineEditReturnPressed();
+	void showCalculationResultContextMenu(const QPoint &point);
+public:
+	Window(ConfigProvider &configProvider);
+	void setSystemConfig(const QVector<EntryConfig> &config);
+	bool eventFilter(QObject *obj, QEvent *event);
+	~Window();
 
 };
 

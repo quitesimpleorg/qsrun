@@ -72,14 +72,14 @@ int main(int argc, char *argv[])
 		}
 		Window *w = new Window { configProvider };
 		QObject::connect(&server, &SingleInstanceServer::receivedMaximizationRequest, [&w]{
-					if(w != nullptr)
-					{
-						qInfo() << "maximizing as requested by other instance";
-						w->showMaximized();
-						w->activateWindow();
-						w->raise();
-					}
-				});
+			if(w != nullptr)
+			{
+				qInfo() << "maximizing as requested by other instance";
+				w->showMaximized();
+				w->activateWindow();
+				w->raise();
+			}
+		});
 		w->showMaximized();
 
 	}

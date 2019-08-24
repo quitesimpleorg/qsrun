@@ -24,14 +24,14 @@
 #include <QKeySequence>
 class EntryConfig
 {
-	public:
-        QString key;
-        QString name;
-        QString command;
-        QStringList arguments;
-        QIcon icon;
-        int row=0;
-        int col=0;
+public:
+	QString key;
+	QString name;
+	QString command;
+	QStringList arguments;
+	QIcon icon;
+	int row=0;
+	int col=0;
 
 
 	
@@ -39,21 +39,21 @@ class EntryConfig
 
 class ConfigReader
 {
-	private:
-        QStringList configPaths;
-		EntryConfig readFromFile(const QString &path);
-		EntryConfig readFromDesktopFile(const QString &path);
-		QStringList desktopIgnoreArgs;
-	public:
-        ConfigReader(QStringList paths);
-        QVector<EntryConfig> readConfig();
+private:
+	QStringList configPaths;
+	EntryConfig readFromFile(const QString &path);
+	EntryConfig readFromDesktopFile(const QString &path);
+	QStringList desktopIgnoreArgs;
+public:
+	ConfigReader(QStringList paths);
+	QVector<EntryConfig> readConfig();
 };
 
 class ConfigFormatException : public std::runtime_error
 {
 public:
-    ConfigFormatException() : std::runtime_error("Error in configuration file, misformated line?") {};
-    ConfigFormatException(const std::string &str) : std::runtime_error(str) {};
+	ConfigFormatException() : std::runtime_error("Error in configuration file, misformated line?") {};
+	ConfigFormatException(const std::string &str) : std::runtime_error(str) {};
 };
 
 #endif

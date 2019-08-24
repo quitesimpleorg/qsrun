@@ -26,12 +26,12 @@
 class CalculationEngine
 {
 private:
-    EvaluationOptions eo;
-    PrintOptions po;
+	EvaluationOptions eo;
+	PrintOptions po;
 
 public:
-    CalculationEngine();
-    QString evaluate(const QString &expression);
+	CalculationEngine();
+	QString evaluate(const QString &expression);
 };
 
 #endif // CALCULATIONENGINE_H

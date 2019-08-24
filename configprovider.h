@@ -6,13 +6,13 @@
 class ConfigProvider
 {
 private:
-    QSettings *settings;
-    QString configDirPath;
+	QSettings *settings;
+	QString configDirPath;
 public:
-    ConfigProvider(QString configDirPath, QSettings &settings);
-    QVector<EntryConfig> getUserEntries();
-    QVector<EntryConfig> getSystemEntries();
-    bool singleInstanceMode();
+	ConfigProvider(QString configDirPath, QSettings &settings);
+	QVector<EntryConfig> getUserEntries();
+	QVector<EntryConfig> getSystemEntries();
+	bool singleInstanceMode();
 };
 
 #endif // CONFIGPROVIDER_H

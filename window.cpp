@@ -1,18 +1,18 @@
 /*
- * Copyright (c) 2018 Albert S. <mail at quitesimple dot org>
- *
- * Permission to use, copy, modify, and distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- */
+	* Copyright (c) 2018 Albert S. <mail at quitesimple dot org>
+	*
+	* Permission to use, copy, modify, and distribute this software for any
+	* purpose with or without fee is hereby granted, provided that the above
+	* copyright notice and this permission notice appear in all copies.
+	*
+	* THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+	* WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+	* MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+	* ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+	* WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+	* ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+	* OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+	*/
 #include <QProcess>
 #include <QProcessEnvironment>
 #include <QDirIterator>
@@ -94,20 +94,20 @@ QVector<EntryPushButton*> Window::generateEntryButtons(const QVector<EntryConfig
 
 void Window::createGui()
 {
-  QVBoxLayout *vbox = new QVBoxLayout(this);
-  QScrollArea *sa = new QScrollArea;
-  grid = new QGridLayout();
-  lineEdit = new QLineEdit();
-  QWidget *w = new QWidget(this);
-  w->setLayout(grid);
-  sa->setWidget(w);
-  sa->setWidgetResizable(true);
-  vbox->setAlignment(Qt::AlignTop);
-  vbox->addWidget(lineEdit);
-  vbox->addWidget(sa);
+	QVBoxLayout *vbox = new QVBoxLayout(this);
+	QScrollArea *sa = new QScrollArea;
+	grid = new QGridLayout();
+	lineEdit = new QLineEdit();
+	QWidget *w = new QWidget(this);
+	w->setLayout(grid);
+	sa->setWidget(w);
+	sa->setWidgetResizable(true);
+	vbox->setAlignment(Qt::AlignTop);
+	vbox->addWidget(lineEdit);
+	vbox->addWidget(sa);
 
-  connect(lineEdit, &QLineEdit::textChanged, this, [this](QString newtext) { this->lineEditTextChanged(newtext); });
-  connect(lineEdit, &QLineEdit::returnPressed, this, &Window::lineEditReturnPressed);
+	connect(lineEdit, &QLineEdit::textChanged, this, [this](QString newtext) { this->lineEditTextChanged(newtext); });
+	connect(lineEdit, &QLineEdit::returnPressed, this, &Window::lineEditReturnPressed);
 }
 
 void Window::populateGrid(const QVector<EntryPushButton *> &list)
@@ -151,7 +151,6 @@ QStringList Window::generatePATHSuggestions(const QString &text)
 				QString entry = info.baseName();
 				if(entry.startsWith(text))
 				{
-
 					results.append(entry);
 				}
 			}
@@ -242,7 +241,7 @@ void Window::lineEditTextChanged(QString text)
 		addPATHSuggestion(text);
 		if(this->grid->count()  ==  0)
 		{
-			
+
 			QStringList arguments = text.split(" ");
 			EntryConfig e;
 			e.name = "Execute: " + text;
@@ -252,7 +251,7 @@ void Window::lineEditTextChanged(QString text)
 			}
 			e.command = arguments[0];
 			e.icon = QIcon::fromTheme("utilities-terminal");
-			
+
 			EntryPushButton *button = createEntryButton(e);
 			clearGrid();
 			grid->addWidget(button, 0, 0);
@@ -281,7 +280,7 @@ void Window::keyPressEvent(QKeyEvent *event)
 	{
 		qApp->quit();
 	}
-	
+
 	if(event->modifiers() & Qt::ControlModifier && buttonsInGrid.count() > 0)
 	{
 
@@ -300,7 +299,7 @@ void Window::keyPressEvent(QKeyEvent *event)
 
 		QKeySequence seq(event->key());
 		QString key = seq.toString().toLower();
-		
+
 		auto it = std::find_if(buttonsInGrid.begin(), buttonsInGrid.end(), [&key](const EntryPushButton *y) { return y->getShortcutKey() == key; });
 		if(it != buttonsInGrid.end())
 		{
@@ -349,8 +348,8 @@ void Window::filterGridFor(QString filter)
 					}
 				}
 			}
-		 }
-			
+		}
+
 
 
 	}
@@ -358,7 +357,7 @@ void Window::filterGridFor(QString filter)
 	{
 		populateGrid(this->userEntryButtons);
 	}
-	
+
 }
 
 EntryPushButton * Window::createEntryButton(const EntryConfig &entry)

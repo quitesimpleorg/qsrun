@@ -6,16 +6,16 @@
 
 class SingleInstanceServer : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 private:
-    QLocalServer server;
+	QLocalServer server;
 private slots:
-    void handleNewConnection();
+	void handleNewConnection();
 public:
-    SingleInstanceServer();
-    bool listen(QString socketPath);
- signals:
-     void receivedMaximizationRequest();
+	SingleInstanceServer();
+	bool listen(QString socketPath);
+signals:
+	void receivedMaximizationRequest();
 };
 
 #endif // SINGLEINSTANCESERVER_H
