@@ -44,8 +44,11 @@ int main(int argc, char *argv[])
 	QDir dir;
 	if(!dir.exists(configDirectoryPath))
 	{
-		QMessageBox::warning(nullptr, "Directory not found", configDirectoryPath + " was not found!");
-		return 1;
+		if(!dir.mkdir(configDirectoryPath))
+		{
+			QMessageBox::warning(nullptr, "Failed to create dir", configDirectoryPath + " was not found and could not be created!");
+			return 1;
+		}
 	}
 
 	QSettings settings(configDirectoryPath + "qsrun.config", QSettings::NativeFormat);
