@@ -66,6 +66,7 @@ private:
 	void addCalcResult(const QString & expression);
 	void initTreeWidgets();
 	QStringList generatePATHSuggestions(const QString &text);
+	void closeWindow();
 private slots:
 	void lineEditReturnPressed();
 	void showCalculationResultContextMenu(const QPoint &point);

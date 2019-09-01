@@ -124,6 +124,11 @@ void Window::populateGrid(const QVector<EntryPushButton *> &list)
 void Window::buttonClick(const EntryPushButton &config)
 {
 	QProcess::startDetached(config.getCommand(), config.getArguments());
+	this->closeWindow();
+}
+
+void Window::closeWindow()
+{
 	if(configProvider->singleInstanceMode())
 	{
 		this->lineEdit->setText("");
@@ -275,10 +280,10 @@ void Window::keyReleaseEvent(QKeyEvent *event)
 }
 void Window::keyPressEvent(QKeyEvent *event)
 {
-	bool quit = ((event->modifiers() & Qt::ControlModifier && event->key() == Qt::Key_Q) || event->key() == Qt::Key_Escape);
-	if(quit)
+	bool closeWindow = ((event->modifiers() & Qt::ControlModifier && event->key() == Qt::Key_Q) || event->key() == Qt::Key_Escape);
+	if(closeWindow)
 	{
-		qApp->quit();
+		this->closeWindow();
 	}
 
 	if(event->modifiers() & Qt::ControlModifier && buttonsInGrid.count() > 0)
