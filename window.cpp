@@ -423,3 +423,7 @@ bool Window::eventFilter(QObject *obj, QEvent *event)
 
 }
 
+void Window::focusInput()
+{
+	this->lineEdit->setFocus();
+}

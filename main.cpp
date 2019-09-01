@@ -86,9 +86,11 @@ int main(int argc, char *argv[])
 				w->showMaximized();
 				w->activateWindow();
 				w->raise();
+				w->focusInput();
 			}
 		});
 		w->showMaximized();
+		w->focusInput();
 
 	}
 

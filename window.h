@@ -74,6 +74,7 @@ public:
 	Window(ConfigProvider &configProvider);
 	void setSystemConfig(const QVector<EntryConfig> &config);
 	bool eventFilter(QObject *obj, QEvent *event);
+	void focusInput();
 	~Window();
 
 };
