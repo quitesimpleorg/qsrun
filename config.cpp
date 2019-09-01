@@ -182,7 +182,7 @@ QVector<EntryConfig> ConfigReader::readConfig()
 	QVector<EntryConfig> result;
 	for(QString &configPath : configPaths)
 	{
-		QDirIterator it(configPath);
+		QDirIterator it(configPath, QDirIterator::Subdirectories);
 		while(it.hasNext())
 		{
 			QString path = it.next();
