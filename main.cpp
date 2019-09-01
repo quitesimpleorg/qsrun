@@ -30,9 +30,15 @@ int main(int argc, char *argv[])
 {
 	QApplication app(argc, argv);
 	QString configDirectoryPath;
+	QDir dir;
 	if(argc >= 2)
 	{
 		configDirectoryPath = QCoreApplication::arguments().at(1);
+		if(!dir.exists(configDirectoryPath))
+		{
+			QMessageBox::warning(nullptr, "Directory not found", configDirectoryPath + " was not found");
+			return 1;
+		}
 	}
 	else
 	{
@@ -41,7 +47,6 @@ int main(int argc, char *argv[])
 	qRegisterMetaType<QVector<QString> >("QVector<QString>");
 
 
-	QDir dir;
 	if(!dir.exists(configDirectoryPath))
 	{
 		if(!dir.mkdir(configDirectoryPath))
