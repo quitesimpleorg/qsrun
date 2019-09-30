@@ -12,7 +12,7 @@ QVector<EntryConfig> ConfigProvider::getUserEntries()
 	return reader.readConfig();
 }
 
-QVector<EntryConfig>  ConfigProvider::getSystemEntries()
+QVector<EntryConfig> ConfigProvider::getSystemEntries()
 {
 	QStringList systemApplicationsPaths = settings->value("sysAppsPaths", "/usr/share/applications/").toStringList();
 	ConfigReader systemConfigReader(systemApplicationsPaths);

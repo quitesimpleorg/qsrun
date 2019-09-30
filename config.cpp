@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Albert S. <mail at quitesimple dot org>
+ * Copyright (c) 2018-2019 Albert S. <mail at quitesimple dot org>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -87,12 +87,8 @@ EntryConfig ConfigReader::readFromDesktopFile(const QString &path)
 					}
 				}
 			}
-
-
 		}
-
 	}
-
 	return result;
 }
 

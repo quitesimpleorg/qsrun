@@ -1,18 +1,18 @@
 /*
-	* Copyright (c) 2018 Albert S. <mail at quitesimple dot org>
-	*
-	* Permission to use, copy, modify, and distribute this software for any
-	* purpose with or without fee is hereby granted, provided that the above
-	* copyright notice and this permission notice appear in all copies.
-	*
-	* THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-	* WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-	* MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-	* ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-	* WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-	* ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-	* OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-	*/
+* Copyright (c) 2018-2019 Albert S. <mail at quitesimple dot org>
+*
+* Permission to use, copy, modify, and distribute this software for any
+* purpose with or without fee is hereby granted, provided that the above
+* copyright notice and this permission notice appear in all copies.
+*
+* THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+* WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+* MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+* ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+* WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+* ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+* OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+*/
 #include <QProcess>
 #include <QProcessEnvironment>
 #include <QDirIterator>
@@ -43,8 +43,6 @@ Window::Window(ConfigProvider &configProvider)
 	calculationResultLabel.setAlignment(Qt::AlignCenter);
 	calculationResultLabel.setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
 	connect(&calculationResultLabel, &QLabel::customContextMenuRequested, this, &Window::showCalculationResultContextMenu);
-
-
 }
 
 Window::~Window()
@@ -52,9 +50,6 @@ Window::~Window()
 
 
 }
-
-
-
 
 void Window::initFromConfig()
 {
@@ -207,7 +202,7 @@ void Window::addCalcResult(const QString &expression)
 	int calculatedPointSize = currentFont.pointSize();
 	QFontMetrics fm(currentFont);
 	int contentWidth = calculationResultLabel.contentsRect().width() - calculationResultLabel.margin();
-	while(calculatedPointSize < 48 &&  fm.boundingRect(labelText).width() < contentWidth)
+	while(calculatedPointSize < 48 && fm.boundingRect(labelText).width() < contentWidth)
 	{
 		calculatedPointSize += 1;
 		currentFont.setPointSize(calculatedPointSize);
@@ -233,20 +228,17 @@ void Window::lineEditTextChanged(QString text)
 		QString input = text.mid(1);
 		if(text[0] == '=')
 		{
-
 			addCalcResult(input);
 			return;
 		}
-
 	}
 
 	filterGridFor(text);
 	if(this->grid->count() == 0)
 	{
 		addPATHSuggestion(text);
-		if(this->grid->count()  ==  0)
+		if(this->grid->count() == 0)
 		{
-
 			QStringList arguments = text.split(" ");
 			EntryConfig e;
 			e.name = "Execute: " + text;
@@ -273,7 +265,6 @@ void Window::keyReleaseEvent(QKeyEvent *event)
 		{
 			button->showName();
 		}
-
 	}
 	QWidget::keyReleaseEvent(event);
 
@@ -288,19 +279,16 @@ void Window::keyPressEvent(QKeyEvent *event)
 
 	if(event->modifiers() & Qt::ControlModifier && buttonsInGrid.count() > 0)
 	{
-
 		if(event->key() == Qt::Key_L)
 		{
 			this->lineEdit->setFocus();
 			this->lineEdit->selectAll();
 		}
 
-
 		for(EntryPushButton *button : buttonsInGrid)
 		{
 			button->showShortcut();
 		}
-
 
 		QKeySequence seq(event->key());
 		QString key = seq.toString().toLower();
@@ -368,7 +356,7 @@ void Window::filterGridFor(QString filter)
 EntryPushButton * Window::createEntryButton(const EntryConfig &entry)
 {
 	EntryPushButton *button = new EntryPushButton(entry);
-	connect(button, &EntryPushButton::clicked, this,  &Window::buttonClick);
+	connect(button, &EntryPushButton::clicked, this, &Window::buttonClick);
 	return button;
 }
 
@@ -394,12 +382,8 @@ void Window::setSystemConfig(const QVector<EntryConfig> &config)
 	this->systemEntryButtons = generateEntryButtons(config);
 }
 
-
-
-
 bool Window::eventFilter(QObject *obj, QEvent *event)
 {
-
 	if(obj == this->lineEdit)
 	{
 		if (event->type() == QEvent::KeyPress)
@@ -413,14 +397,12 @@ bool Window::eventFilter(QObject *obj, QEvent *event)
 					this->lineEdit->setText(suggestions[0] + " ");
 					this->lineEdit->setCursorPosition(this->lineEdit->text().length()+1);
 				}
-
 				return true;
 			}
 		}
 
 	}
 	return QObject::eventFilter(obj, event);
-
 }
 
 void Window::focusInput()
