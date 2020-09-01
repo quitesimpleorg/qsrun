@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2019 Albert S. <mail at quitesimple dot org>
+ * Copyright (c) 2018-2020 Albert S. <mail at quitesimple dot org>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -185,7 +185,7 @@ QVector<EntryConfig> ConfigReader::readConfig()
 			QFileInfo info(path);
 			if(info.isFile())
 			{
-				QString suffix = info.completeSuffix();
+				QString suffix = info.suffix();
 				if(suffix == "desktop")
 				{
 					result.append(readFromDesktopFile(path));
