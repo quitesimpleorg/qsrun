@@ -2,6 +2,7 @@
 #define ENTRYPROVIDER_H
 #include <QIcon>
 #include <QSettings>
+#include <optional>
 
 class ConfigFormatException : public std::runtime_error
 {
@@ -35,8 +36,9 @@ class EntryProvider
 	QStringList _desktopIgnoreArgs;
 	QStringList userEntriesDirsPaths;
 	QStringList systemEntriesDirsPaths;
-	EntryConfig readFromFile(const QString &path);
+	EntryConfig readqsrunFile(const QString &path);
 	EntryConfig readFromDesktopFile(const QString &path);
+	std::optional<EntryConfig> readEntryFromPath(const QString &path);
 	QVector<EntryConfig> readConfig(QStringList paths);
 	QString resolveEntryPath(QString path);
 

@@ -23,5 +23,5 @@ SOURCES += calculationengine.cpp \
 QT += widgets sql network
 QT_CONFIG -= no-pkg-config
 LIBS += -lcln
-CONFIG += link_pkgconfig
+CONFIG += link_pkgconfig c++17
 PKGCONFIG += libqalculate

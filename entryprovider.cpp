@@ -83,8 +83,26 @@ EntryConfig EntryProvider::readFromDesktopFile(const QString &path)
 	return result;
 }
 
-/* qsrun own's config file */
-EntryConfig EntryProvider::readFromFile(const QString &path)
+std::optional<EntryConfig> EntryProvider::readEntryFromPath(const QString &path)
+{
+	QFileInfo info(path);
+	if(info.isFile())
+	{
+		QString suffix = info.suffix();
+		if(suffix == "desktop")
+		{
+			return readFromDesktopFile(path);
+		}
+		if(suffix == "qsrun")
+		{
+			return readqsrunFile(path);
+		}
+	}
+	return {};
+}
+
+/* qsrun's own format */
+EntryConfig EntryProvider::readqsrunFile(const QString &path)
 {
 	EntryConfig result;
 	EntryConfig inheritedConfig;
@@ -163,7 +181,11 @@ EntryConfig EntryProvider::readFromFile(const QString &path)
 		}
 		if(key == "inherit")
 		{
-			inheritedConfig = readFromDesktopFile(resolveEntryPath(splitted[1]));
+			auto entry = readEntryFromPath(resolveEntryPath(splitted[1]));
+			if(entry)
+			{
+				inheritedConfig = *entry;
+			}
 		}
 	}
 	return result.update(inheritedConfig);
@@ -201,22 +223,12 @@ QVector<EntryConfig> EntryProvider::readConfig(QStringList paths)
 		while(it.hasNext())
 		{
 			QString path = it.next();
-			QFileInfo info(path);
-			if(info.isFile())
+			std::optional<EntryConfig> entry = readEntryFromPath(path);
+			if(entry)
 			{
-				QString suffix = info.suffix();
-				EntryConfig entry;
-				if(suffix == "desktop")
+				if(!entry->hidden)
 				{
-					entry = readFromDesktopFile(path);
-				}
-				if(suffix == "qsrun")
-				{
-					entry = readFromFile(path);
-				}
-				if(!entry.hidden && entry.name != "")
-				{
-					result.append(entry);
+					result.append(*entry);
 				}
 			}
 		}
