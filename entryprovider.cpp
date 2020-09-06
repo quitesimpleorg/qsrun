@@ -1,48 +1,35 @@
-/*
- * Copyright (c) 2018-2020 Albert S. <mail at quitesimple dot org>
- *
- * Permission to use, copy, modify, and distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- */
-#include "config.h"
-#include <QDirIterator>
+#include "entryprovider.h"
 #include <QDebug>
+#include <QDirIterator>
 #include <QTextStream>
 
-
-ConfigReader::ConfigReader(QStringList paths)
+EntryProvider::EntryProvider(QStringList userEntriesDirsPaths, QStringList systemEntriesDirsPaths)
 {
-	this->configPaths = paths;
-	desktopIgnoreArgs << "%F" << "%f" << "%U" << "%u";
+	this->userEntriesDirsPaths = userEntriesDirsPaths;
+	this->systemEntriesDirsPaths = systemEntriesDirsPaths;
+	_desktopIgnoreArgs << "%F"
+					   << "%f"
+					   << "%U"
+					   << "%u";
 }
 
-
-EntryConfig ConfigReader::readFromDesktopFile(const QString &path)
+EntryConfig EntryProvider::readFromDesktopFile(const QString &path)
 {
 	EntryConfig result;
 	QFile file(path);
-	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+	if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
-		//TODO: better exception class
+		// TODO: better exception class
 		throw new std::runtime_error("Failed to open file");
 	}
 	QTextStream stream(&file);
-	//There should be nothing preceding this group in the desktop entry file but possibly one or more comments.
-	//https://standards.freedesktop.org/desktop-entry-spec/latest/ar01s03.html#group-header
+	// There should be nothing preceding this group in the desktop entry file but possibly one or more comments.
+	// https://standards.freedesktop.org/desktop-entry-spec/latest/ar01s03.html#group-header
 	QString firstLine;
 	do
 	{
 		firstLine = stream.readLine().trimmed();
-	} while(!stream.atEnd() && ( firstLine.isEmpty() || firstLine[0] == '#') );
+	} while(!stream.atEnd() && (firstLine.isEmpty() || firstLine[0] == '#'));
 
 	if(firstLine != "[Desktop Entry]")
 	{
@@ -52,13 +39,13 @@ EntryConfig ConfigReader::readFromDesktopFile(const QString &path)
 	while(!stream.atEnd())
 	{
 		QString line = stream.readLine();
-		//new group, so we are finished with [Desktop Entry]
+		// new group, so we are finished with [Desktop Entry]
 		if(line.startsWith("[") && line.endsWith("]"))
 		{
 			return result;
 		}
 
-		QString key = line.section('=',0,0).toLower();
+		QString key = line.section('=', 0, 0).toLower();
 		QString args = line.section('=', 1);
 		if(key == "name")
 		{
@@ -81,7 +68,7 @@ EntryConfig ConfigReader::readFromDesktopFile(const QString &path)
 			{
 				for(QString &arg : arguments)
 				{
-					if(!desktopIgnoreArgs.contains(arg))
+					if(!_desktopIgnoreArgs.contains(arg))
 					{
 						result.arguments.append(arg);
 					}
@@ -93,13 +80,14 @@ EntryConfig ConfigReader::readFromDesktopFile(const QString &path)
 }
 
 /* qsrun own's config file */
-EntryConfig ConfigReader::readFromFile(const QString &path)
+EntryConfig EntryProvider::readFromFile(const QString &path)
 {
 	EntryConfig result;
+	EntryConfig inheritedConfig;
 	QFile file(path);
-	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+	if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
-		//TODO: better exception class
+		// TODO: better exception class
 		throw new std::runtime_error("Failed to open file");
 	}
 	QTextStream stream(&file);
@@ -165,18 +153,45 @@ EntryConfig ConfigReader::readFromFile(const QString &path)
 		}
 		if(key == "key")
 		{
-			//QKeySequence sequence(splitted[1]);
-			//result.keySequence = sequence;
+			// QKeySequence sequence(splitted[1]);
+			// result.keySequence = sequence;
 			result.key = splitted[1].toLower();
+		}
+		if(key == "inherit")
+		{
+			inheritedConfig = readFromDesktopFile(resolveEntryPath(splitted[1]));
 		}
 	}
 	return result;
 }
 
-QVector<EntryConfig> ConfigReader::readConfig()
+QString EntryProvider::resolveEntryPath(QString path)
+{
+	if(path.trimmed().isEmpty())
+	{
+		return {};
+	}
+	if(path[0] == '/')
+	{
+		return path;
+	}
+	QStringList paths = this->userEntriesDirsPaths + this->systemEntriesDirsPaths;
+	for(QString &configPath : paths)
+	{
+		QDir dir(configPath);
+		QString desktopFilePath = dir.absoluteFilePath(path);
+		if(QFileInfo::exists(desktopFilePath))
+		{
+			return desktopFilePath;
+		}
+	}
+	return {};
+}
+
+QVector<EntryConfig> EntryProvider::readConfig(QStringList paths)
 {
 	QVector<EntryConfig> result;
-	for(QString &configPath : configPaths)
+	for(QString &configPath : paths)
 	{
 		QDirIterator it(configPath, QDirIterator::Subdirectories);
 		while(it.hasNext())
@@ -189,7 +204,6 @@ QVector<EntryConfig> ConfigReader::readConfig()
 				if(suffix == "desktop")
 				{
 					result.append(readFromDesktopFile(path));
-
 				}
 				if(suffix == "qsrun")
 				{
@@ -197,8 +211,16 @@ QVector<EntryConfig> ConfigReader::readConfig()
 				}
 			}
 		}
-
 	}
-	
 	return result;
+}
+
+QVector<EntryConfig> EntryProvider::getUserEntries()
+{
+	return readConfig(this->userEntriesDirsPaths);
+}
+
+QVector<EntryConfig> EntryProvider::getSystemEntries()
+{
+	return readConfig(this->systemEntriesDirsPaths);
 }
