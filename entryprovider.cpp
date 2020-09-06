@@ -75,6 +75,10 @@ EntryConfig EntryProvider::readFromDesktopFile(const QString &path)
 				}
 			}
 		}
+		if(key == "nodisplay")
+		{
+			result.hidden = args == "true";
+		}
 	}
 	return result;
 }
@@ -201,13 +205,18 @@ QVector<EntryConfig> EntryProvider::readConfig(QStringList paths)
 			if(info.isFile())
 			{
 				QString suffix = info.suffix();
+				EntryConfig entry;
 				if(suffix == "desktop")
 				{
-					result.append(readFromDesktopFile(path));
+					entry = readFromDesktopFile(path);
 				}
 				if(suffix == "qsrun")
 				{
-					result.append(readFromFile(path));
+					entry = readFromFile(path);
+				}
+				if(!entry.hidden && entry.name != "")
+				{
+					result.append(entry);
 				}
 			}
 		}

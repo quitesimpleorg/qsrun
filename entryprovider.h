@@ -17,6 +17,7 @@ class ConfigFormatException : public std::runtime_error
 class EntryConfig
 {
   public:
+	bool hidden = false;
 	QString key;
 	QString name;
 	QString command;
