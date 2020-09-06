@@ -62,6 +62,18 @@ col 0
 key I
 ```
 
+
+Example with inheritance: qsrun will search for "vlc.desktop" inside the paths defined in sysAppsPaths:
+
+```
+inherit vlc.desktop
+row 3
+col 1
+```
+
+Therefore, there is no need to explicitly the entry a name or icon etc. However, values given here will overwrite the inherited values.
+
+
 "key" means a shortcut key, you can launch those by pressing Ctrl + "key", so in
 the example above: CTRL + I.
 
