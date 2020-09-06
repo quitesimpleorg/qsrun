@@ -18,7 +18,7 @@
 
 #include <QWidget>
 #include <QPushButton>
-#include "config.h"
+#include "entryprovider.h"
 class EntryPushButton : public QPushButton
 {
 	Q_OBJECT
@@ -44,8 +44,8 @@ public:
 	void setRow(int row);
 	void setCol(int col);
 	void setShortcutKey(QString key);
-
-
 };
+
+
 
 #endif // ENTRYPUSHBUTTON_H

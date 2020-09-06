@@ -28,10 +28,11 @@
 #include <QClipboard>
 #include <QScrollArea>
 #include "window.h"
-#include "configprovider.h"
-Window::Window(ConfigProvider &configProvider)
+#include "entryprovider.h"
+Window::Window(EntryProvider &entryProvider, SettingsProvider &configProvider)
 {
-	this->configProvider = &configProvider;
+	this->entryProvider = &entryProvider;
+	this->settingsProvider = &configProvider;
 	createGui();
 	initFromConfig();
 	this->lineEdit->installEventFilter(this);
@@ -55,8 +56,8 @@ void Window::initFromConfig()
 {
 	try
 	{
-		this->userEntryButtons = generateEntryButtons(configProvider->getUserEntries());
-		this->systemEntryButtons = generateEntryButtons(configProvider->getSystemEntries());
+		this->userEntryButtons = generateEntryButtons(entryProvider->getUserEntries());
+		this->systemEntryButtons = generateEntryButtons(entryProvider->getSystemEntries());
 	}
 	catch(const ConfigFormatException &e)
 	{
@@ -124,7 +125,7 @@ void Window::buttonClick(const EntryPushButton &config)
 
 void Window::closeWindow()
 {
-	if(configProvider->singleInstanceMode())
+	if(settingsProvider->singleInstanceMode())
 	{
 		this->lineEdit->setText("");
 		hide();

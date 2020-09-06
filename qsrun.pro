@@ -7,19 +7,21 @@ TARGET = qsrun
 INCLUDEPATH += .
 
 # Input
-HEADERS += config.h window.h \
-    entrypushbutton.h \
-    calculationengine.h \
-    singleinstanceserver.h \
-    configprovider.h
-SOURCES += config.cpp main.cpp window.cpp \
-    entrypushbutton.cpp \
-    calculationengine.cpp \
-    singleinstanceserver.cpp \
-    configprovider.cpp
+HEADERS += calculationengine.h \
+           entryprovider.h \
+           entrypushbutton.h \
+           settingsprovider.h \
+           singleinstanceserver.h \
+           window.h
+SOURCES += calculationengine.cpp \
+           entryprovider.cpp \
+           entrypushbutton.cpp \
+           main.cpp \
+           settingsprovider.cpp \
+           singleinstanceserver.cpp \
+           window.cpp
 QT += widgets sql network
 QT_CONFIG -= no-pkg-config
 LIBS += -lcln
 CONFIG += link_pkgconfig
 PKGCONFIG += libqalculate
-

@@ -19,12 +19,11 @@
 #include <QtConcurrent/QtConcurrentRun>
 #include <QSettings>
 #include <QLocalSocket>
-#include "configprovider.h"
+#include <QDir>
+#include "settingsprovider.h"
+#include "entryprovider.h"
 #include "window.h"
 #include "singleinstanceserver.h"
-
-
-
 
 int main(int argc, char *argv[])
 {
@@ -58,7 +57,8 @@ int main(int argc, char *argv[])
 
 	QSettings settings(configDirectoryPath + "qsrun.config", QSettings::NativeFormat);
 
-	ConfigProvider configProvider(configDirectoryPath, settings);
+	SettingsProvider settingsProvider { settings };
+	EntryProvider entryProvider(settingsProvider.userEntriesPaths(), settingsProvider.systemApplicationsEntriesPaths());
 	//TODO if setting single instance mode
 	QLocalSocket localSocket;
 	localSocket.connectToServer("/tmp/qsrun.socket");
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
 		{
 			qDebug() << "Failed to listen on socket!";
 		}
-		Window *w = new Window { configProvider };
+		Window *w = new Window { entryProvider, settingsProvider };
 		QObject::connect(&server, &SingleInstanceServer::receivedMaximizationRequest, [&w]{
 			if(w != nullptr)
 			{

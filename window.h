@@ -30,16 +30,16 @@
 #include <QThread>
 #include <QTreeWidget>
 #include <QLabel>
-#include "config.h"
 #include "entrypushbutton.h"
 #include "calculationengine.h"
-#include "configprovider.h"
+#include "settingsprovider.h"
 
 class Window : public QWidget
 {
 	Q_OBJECT
 private:
-	ConfigProvider *configProvider;
+	EntryProvider *entryProvider;
+	SettingsProvider *settingsProvider;
 	CalculationEngine calcEngine;
 	QString calculationresult;
 	QVector<EntryPushButton*> userEntryButtons;
@@ -71,7 +71,7 @@ private slots:
 	void lineEditReturnPressed();
 	void showCalculationResultContextMenu(const QPoint &point);
 public:
-	Window(ConfigProvider &configProvider);
+	Window(EntryProvider &entryProvider, SettingsProvider &settingsProvider);
 	void setSystemConfig(const QVector<EntryConfig> &config);
 	bool eventFilter(QObject *obj, QEvent *event);
 	void focusInput();
