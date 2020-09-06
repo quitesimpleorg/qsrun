@@ -24,6 +24,8 @@ class EntryConfig
 	QIcon icon;
 	int row = 0;
 	int col = 0;
+
+	EntryConfig &update(const EntryConfig &o);
 };
 
 class EntryProvider

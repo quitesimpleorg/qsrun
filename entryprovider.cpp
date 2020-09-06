@@ -162,7 +162,7 @@ EntryConfig EntryProvider::readFromFile(const QString &path)
 			inheritedConfig = readFromDesktopFile(resolveEntryPath(splitted[1]));
 		}
 	}
-	return result;
+	return result.update(inheritedConfig);
 }
 
 QString EntryProvider::resolveEntryPath(QString path)
@@ -223,4 +223,27 @@ QVector<EntryConfig> EntryProvider::getUserEntries()
 QVector<EntryConfig> EntryProvider::getSystemEntries()
 {
 	return readConfig(this->systemEntriesDirsPaths);
+}
+
+template <class T> void assignIfDestDefault(T &dest, const T &source)
+{
+	if(dest == T())
+	{
+		dest = source;
+	}
+}
+
+EntryConfig &EntryConfig::update(const EntryConfig &o)
+{
+	assignIfDestDefault(this->arguments, o.arguments);
+	assignIfDestDefault(this->col, o.col);
+	assignIfDestDefault(this->command, o.command);
+	if(this->icon.isNull())
+	{
+		this->icon = o.icon;
+	}
+	assignIfDestDefault(this->key, o.key);
+	assignIfDestDefault(this->name, o.name);
+	assignIfDestDefault(this->row, o.row);
+	return *this;
 }
