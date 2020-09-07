@@ -1,32 +1,33 @@
 /*
-* Copyright (c) 2018-2019 Albert S. <mail at quitesimple dot org>
-*
-* Permission to use, copy, modify, and distribute this software for any
-* purpose with or without fee is hereby granted, provided that the above
-* copyright notice and this permission notice appear in all copies.
-*
-* THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-* WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-* MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-* ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-* WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-* ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-* OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-*/
-#include <QProcess>
-#include <QProcessEnvironment>
+ * Copyright (c) 2018-2020 Albert S. <mail at quitesimple dot org>
+ *
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+#include <QClipboard>
+#include <QDate>
+#include <QDebug>
+#include <QDesktopServices>
 #include <QDirIterator>
+#include <QFileIconProvider>
+#include <QHeaderView>
 #include <QIcon>
 #include <QKeySequence>
 #include <QLabel>
-#include <QDate>
-#include <QHeaderView>
-#include <QDesktopServices>
-#include <QFileIconProvider>
-#include <QDebug>
 #include <QMenu>
-#include <QClipboard>
+#include <QProcess>
+#include <QProcessEnvironment>
 #include <QScrollArea>
+
 #include "window.h"
 #include "entryprovider.h"
 Window::Window(EntryProvider &entryProvider, SettingsProvider &configProvider)
@@ -43,13 +44,12 @@ Window::Window(EntryProvider &entryProvider, SettingsProvider &configProvider)
 	calculationResultLabel.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	calculationResultLabel.setAlignment(Qt::AlignCenter);
 	calculationResultLabel.setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
-	connect(&calculationResultLabel, &QLabel::customContextMenuRequested, this, &Window::showCalculationResultContextMenu);
+	connect(&calculationResultLabel, &QLabel::customContextMenuRequested, this,
+			&Window::showCalculationResultContextMenu);
 }
 
 Window::~Window()
 {
-
-
 }
 
 void Window::initFromConfig()
@@ -77,9 +77,9 @@ void Window::showCalculationResultContextMenu(const QPoint &point)
 	menu.exec(QCursor::pos());
 }
 
-QVector<EntryPushButton*> Window::generateEntryButtons(const QVector<EntryConfig> &configs)
+QVector<EntryPushButton *> Window::generateEntryButtons(const QVector<EntryConfig> &configs)
 {
-	QVector<EntryPushButton*> result;
+	QVector<EntryPushButton *> result;
 	for(const EntryConfig &config : configs)
 	{
 		EntryPushButton *button = createEntryButton(config);
@@ -167,8 +167,8 @@ void Window::addPATHSuggestion(const QString &text)
 	{
 		EntryConfig e;
 		e.name = suggestions[0];
-		e.col=0;
-		e.row=0;
+		e.col = 0;
+		e.row = 0;
 		e.command = suggestions[0];
 		e.icon = QIcon::fromTheme(suggestions[0]);
 		EntryPushButton *button = createEntryButton(e);
@@ -198,7 +198,6 @@ void Window::addCalcResult(const QString &expression)
 	calculationResultLabel.setText(labelText);
 	calculationResultLabel.setVisible(true);
 
-
 	QFont currentFont = calculationResultLabel.font();
 	int calculatedPointSize = currentFont.pointSize();
 	QFontMetrics fm(currentFont);
@@ -221,7 +220,7 @@ void Window::addCalcResult(const QString &expression)
 	grid->addWidget(&calculationResultLabel, 0, 0);
 }
 
-//main problem here there is no easy event compression (clearing emit queue and only processing the last one)
+// main problem here there is no easy event compression (clearing emit queue and only processing the last one)
 void Window::lineEditTextChanged(QString text)
 {
 	if(text.length() >= 2)
@@ -268,11 +267,11 @@ void Window::keyReleaseEvent(QKeyEvent *event)
 		}
 	}
 	QWidget::keyReleaseEvent(event);
-
 }
 void Window::keyPressEvent(QKeyEvent *event)
 {
-	bool closeWindow = ((event->modifiers() & Qt::ControlModifier && event->key() == Qt::Key_Q) || event->key() == Qt::Key_Escape);
+	bool closeWindow =
+		((event->modifiers() & Qt::ControlModifier && event->key() == Qt::Key_Q) || event->key() == Qt::Key_Escape);
 	if(closeWindow)
 	{
 		this->closeWindow();
@@ -294,7 +293,8 @@ void Window::keyPressEvent(QKeyEvent *event)
 		QKeySequence seq(event->key());
 		QString key = seq.toString().toLower();
 
-		auto it = std::find_if(buttonsInGrid.begin(), buttonsInGrid.end(), [&key](const EntryPushButton *y) { return y->getShortcutKey() == key; });
+		auto it = std::find_if(buttonsInGrid.begin(), buttonsInGrid.end(),
+							   [&key](const EntryPushButton *y) { return y->getShortcutKey() == key; });
 		if(it != buttonsInGrid.end())
 		{
 			buttonClick(**it);
@@ -343,18 +343,14 @@ void Window::filterGridFor(QString filter)
 				}
 			}
 		}
-
-
-
 	}
 	else
 	{
 		populateGrid(this->userEntryButtons);
 	}
-
 }
 
-EntryPushButton * Window::createEntryButton(const EntryConfig &entry)
+EntryPushButton *Window::createEntryButton(const EntryConfig &entry)
 {
 	EntryPushButton *button = new EntryPushButton(entry);
 	connect(button, &EntryPushButton::clicked, this, &Window::buttonClick);
@@ -370,8 +366,7 @@ void Window::lineEditReturnPressed()
 		return;
 	}
 
-
-	if(buttonsInGrid.length() > 0 && this->lineEdit->text().length() > 0 )
+	if(buttonsInGrid.length() > 0 && this->lineEdit->text().length() > 0)
 	{
 		buttonClick(*buttonsInGrid[0]);
 		return;
@@ -387,7 +382,7 @@ bool Window::eventFilter(QObject *obj, QEvent *event)
 {
 	if(obj == this->lineEdit)
 	{
-		if (event->type() == QEvent::KeyPress)
+		if(event->type() == QEvent::KeyPress)
 		{
 			QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
 			if(keyEvent->key() == Qt::Key_Tab)
@@ -396,12 +391,11 @@ bool Window::eventFilter(QObject *obj, QEvent *event)
 				if(suggestions.length() == 1)
 				{
 					this->lineEdit->setText(suggestions[0] + " ");
-					this->lineEdit->setCursorPosition(this->lineEdit->text().length()+1);
+					this->lineEdit->setCursorPosition(this->lineEdit->text().length() + 1);
 				}
 				return true;
 			}
 		}
-
 	}
 	return QObject::eventFilter(obj, event);
 }
