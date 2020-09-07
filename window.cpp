@@ -28,8 +28,8 @@
 #include <QProcessEnvironment>
 #include <QScrollArea>
 
-#include "window.h"
 #include "entryprovider.h"
+#include "window.h"
 Window::Window(EntryProvider &entryProvider, SettingsProvider &configProvider)
 {
 	this->entryProvider = &entryProvider;
@@ -324,6 +324,7 @@ void Window::filterGridFor(QString filter)
 			int currow = 0;
 			int curcol = 0;
 			int i = 1;
+			const int MAX_COLS = this->settingsProvider->getMaxCols();
 			for(EntryPushButton *button : this->systemEntryButtons)
 			{
 				if(button->getName().contains(filter, Qt::CaseInsensitive))
@@ -335,7 +336,7 @@ void Window::filterGridFor(QString filter)
 					}
 					grid->addWidget(button, currow, curcol++);
 					this->buttonsInGrid.append(button);
-					if(curcol == 3)
+					if(curcol == MAX_COLS)
 					{
 						curcol = 0;
 						++currow;

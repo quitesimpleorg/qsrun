@@ -1,17 +1,19 @@
 #ifndef SETTINGSPROVIDER_H
 #define SETTINGSPROVIDER_H
 
-#include <stdexcept>
 #include <QSettings>
+#include <stdexcept>
 
 class SettingsProvider
 {
-private:
+  private:
 	QSettings *settings;
-public:
+
+  public:
 	SettingsProvider(QSettings &settings);
 	virtual QStringList userEntriesPaths() const;
 	virtual QStringList systemApplicationsEntriesPaths() const;
+	virtual int getMaxCols() const;
 	virtual bool singleInstanceMode() const;
 };
 
