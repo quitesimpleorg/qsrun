@@ -181,7 +181,8 @@ EntryConfig EntryProvider::readqsrunFile(const QString &path)
 		}
 		if(key == "inherit")
 		{
-			auto entry = readEntryFromPath(resolveEntryPath(splitted[1]));
+			result.inherit = splitted[1];
+			auto entry = readEntryFromPath(resolveEntryPath(result.inherit));
 			if(entry)
 			{
 				inheritedConfig = *entry;

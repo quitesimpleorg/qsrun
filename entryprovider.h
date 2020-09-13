@@ -26,6 +26,7 @@ class EntryConfig
 	QString command;
 	QStringList arguments;
 	QIcon icon;
+	QString inherit;
 	int row = 0;
 	int col = 0;
 
@@ -41,7 +42,7 @@ class EntryProvider
 	EntryConfig readqsrunFile(const QString &path);
 	EntryConfig readFromDesktopFile(const QString &path);
 	std::optional<EntryConfig> readEntryFromPath(const QString &path);
-	QVector<EntryConfig> readConfig(QStringList paths, bool userentrymode=false);
+	QVector<EntryConfig> readConfig(QStringList paths, bool userentrymode = false);
 	QString resolveEntryPath(QString path);
 
   public:
