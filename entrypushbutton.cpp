@@ -77,6 +77,10 @@ void EntryPushButton::mousePressEvent(QMouseEvent *event)
 
 void EntryPushButton::mouseMoveEvent(QMouseEvent *event)
 {
+	if(! this->config.userEntry)
+	{
+		return;
+	}
 	if(!(event->buttons() & Qt::LeftButton))
 	{
 		return;
