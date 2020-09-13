@@ -231,8 +231,8 @@ QVector<EntryConfig> EntryProvider::readConfig(QStringList paths, bool userentry
 					if(userentrymode)
 					{
 						entry->userEntry = true;
-						entry->entryPath = path;
 					}
+					entry->entryPath = path;
 					result.append(*entry);
 				}
 			}
@@ -249,6 +249,14 @@ QVector<EntryConfig> EntryProvider::getUserEntries()
 QVector<EntryConfig> EntryProvider::getSystemEntries()
 {
 	return readConfig(this->systemEntriesDirsPaths);
+}
+
+void EntryProvider::saveUserEntry(const EntryConfig &config)
+{
+	if(!config.userEntry || config.entryPath.isEmpty())
+	{
+		throw std::runtime_error("Only user entries can be saved");
+	}
 }
 
 template <class T> void assignIfDestDefault(T &dest, const T &source)
