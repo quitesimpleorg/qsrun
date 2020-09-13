@@ -19,6 +19,8 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QMouseEvent>
+#include <QMenu>
+
 #include "entryprovider.h"
 
 #define ENTRYBUTTON_MIME_TYPE_STR "application/x-qsrun-entrypushbutton"
@@ -27,6 +29,8 @@ class EntryPushButton : public QPushButton
 {
 	Q_OBJECT
   private:
+	QMenu systemEntryMenu;
+	QMenu userEntryMenu;
 	EntryConfig config;
 	QPoint dragStartPosition;
 
@@ -35,6 +39,8 @@ class EntryPushButton : public QPushButton
 
   signals:
 	void clicked(const EntryConfig &config);
+	void deleteRequested(const EntryConfig &config);
+	void addToFavourites(const EntryConfig &config);
 
   protected:
 	void mousePressEvent(QMouseEvent *event);

@@ -39,6 +39,9 @@ EntryPushButton::EntryPushButton(const EntryConfig &config) : QPushButton()
 	}
 	this->config = config;
 	connect(this, SIGNAL(clicked()), this, SLOT(emitOwnClicked()));
+
+	systemEntryMenu.addAction("Add to favorites", [&] { emit addToFavourites(this->config); });
+	userEntryMenu.addAction("Delete", [&] { emit deleteRequested(this->config); });
 }
 
 void EntryPushButton::emitOwnClicked()
@@ -72,12 +75,23 @@ void EntryPushButton::mousePressEvent(QMouseEvent *event)
 	{
 		dragStartPosition = event->pos();
 	}
+	if(event->button() == Qt::RightButton)
+	{
+		if(this->config.userEntry)
+		{
+			this->userEntryMenu.exec(QCursor::pos());
+		}
+		else
+		{
+			this->systemEntryMenu.exec(QCursor::pos());
+		}
+	}
 	return QPushButton::mousePressEvent(event);
 }
 
 void EntryPushButton::mouseMoveEvent(QMouseEvent *event)
 {
-	if(! this->config.userEntry)
+	if(!this->config.userEntry)
 	{
 		return;
 	}
