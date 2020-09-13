@@ -18,18 +18,29 @@
 
 #include <QWidget>
 #include <QPushButton>
+#include <QMouseEvent>
 #include "entryprovider.h"
+
+#define ENTRYBUTTON_MIME_TYPE_STR "application/x-qsrun-entrypushbutton"
+
 class EntryPushButton : public QPushButton
 {
 	Q_OBJECT
-private:
+  private:
 	EntryConfig config;
-private slots:
+	QPoint dragStartPosition;
+
+  private slots:
 	void emitOwnClicked();
 
-signals:
+  signals:
 	void clicked(const EntryConfig &config);
-public:
+
+  protected:
+	void mousePressEvent(QMouseEvent *event);
+	void mouseMoveEvent(QMouseEvent *event);
+
+  public:
 	EntryPushButton(const EntryConfig &config);
 	const EntryConfig &getEntryConfig();
 	void setEntryConfig(const EntryConfig &config);
@@ -45,7 +56,5 @@ public:
 	void setCol(int col);
 	void setShortcutKey(QString key);
 };
-
-
 
 #endif // ENTRYPUSHBUTTON_H

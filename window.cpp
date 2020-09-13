@@ -37,6 +37,7 @@ Window::Window(EntryProvider &entryProvider, SettingsProvider &configProvider)
 	createGui();
 	initFromConfig();
 	this->lineEdit->installEventFilter(this);
+	this->setAcceptDrops(true);
 	QFont font;
 	font.setPointSize(48);
 	font.setBold(true);
@@ -404,4 +405,39 @@ bool Window::eventFilter(QObject *obj, QEvent *event)
 void Window::focusInput()
 {
 	this->lineEdit->setFocus();
+}
+
+void Window::dragEnterEvent(QDragEnterEvent *event)
+{
+	if(event->mimeData()->hasFormat(ENTRYBUTTON_MIME_TYPE_STR))
+	{
+		event->acceptProposedAction();
+	}
+}
+
+void Window::dropEvent(QDropEvent *event)
+{
+	int count = grid->count();
+	for(int i = 0; i < count; i++)
+	{
+		QLayoutItem *current = grid->itemAt(i);
+		if(current->geometry().contains(event->pos()))
+		{
+			EntryPushButton *buttonAtDrop = (EntryPushButton *)current->widget();
+			EntryPushButton *buttonAtSource = (EntryPushButton *)event->source();
+
+			int tmp_row = buttonAtSource->getRow();
+			int tmp_col = buttonAtSource->getCol();
+
+			grid->addWidget(buttonAtSource, buttonAtDrop->getRow(), buttonAtDrop->getCol());
+			buttonAtSource->setRow(buttonAtDrop->getRow());
+			buttonAtSource->setCol(buttonAtDrop->getCol());
+
+			grid->addWidget(buttonAtDrop, tmp_row, tmp_col);
+			buttonAtDrop->setRow(tmp_row);
+			buttonAtDrop->setCol(tmp_col);
+			break;
+		}
+	}
+	event->acceptProposedAction();
 }

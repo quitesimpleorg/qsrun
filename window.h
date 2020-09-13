@@ -30,6 +30,9 @@
 #include <QThread>
 #include <QTreeWidget>
 #include <QLabel>
+#include <QMimeData>
+#include <QDebug>
+#include <QRect>
 #include "entrypushbutton.h"
 #include "calculationengine.h"
 #include "settingsprovider.h"
@@ -37,13 +40,17 @@
 class Window : public QWidget
 {
 	Q_OBJECT
-private:
+  protected:
+	void dragEnterEvent(QDragEnterEvent *event);
+	void dropEvent(QDropEvent *event);
+
+  private:
 	EntryProvider *entryProvider;
 	SettingsProvider *settingsProvider;
 	CalculationEngine calcEngine;
 	QString calculationresult;
-	QVector<EntryPushButton*> userEntryButtons;
-	QVector<EntryPushButton*> systemEntryButtons;
+	QVector<EntryPushButton *> userEntryButtons;
+	QVector<EntryPushButton *> systemEntryButtons;
 	QVector<EntryPushButton *> buttonsInGrid;
 	QLabel calculationResultLabel;
 	QString currentCalculationResult;
@@ -63,20 +70,20 @@ private:
 	void lineEditTextChanged(QString text);
 	void addPATHSuggestion(const QString &text);
 	void clearGrid();
-	void addCalcResult(const QString & expression);
+	void addCalcResult(const QString &expression);
 	void initTreeWidgets();
 	QStringList generatePATHSuggestions(const QString &text);
 	void closeWindow();
-private slots:
+  private slots:
 	void lineEditReturnPressed();
 	void showCalculationResultContextMenu(const QPoint &point);
-public:
+
+  public:
 	Window(EntryProvider &entryProvider, SettingsProvider &settingsProvider);
 	void setSystemConfig(const QVector<EntryConfig> &config);
 	bool eventFilter(QObject *obj, QEvent *event);
 	void focusInput();
 	~Window();
-
 };
 
 #endif
