@@ -436,6 +436,17 @@ void Window::dropEvent(QDropEvent *event)
 			grid->addWidget(buttonAtDrop, tmp_row, tmp_col);
 			buttonAtDrop->setRow(tmp_row);
 			buttonAtDrop->setCol(tmp_col);
+
+			try
+			{
+				this->entryProvider->saveUserEntry(buttonAtDrop->getEntryConfig());
+				this->entryProvider->saveUserEntry(buttonAtSource->getEntryConfig());
+			}
+			catch(std::exception &e)
+			{
+				QMessageBox::critical(this, "Failed to rearrange items", e.what());
+			}
+
 			break;
 		}
 	}

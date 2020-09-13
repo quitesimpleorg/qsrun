@@ -258,6 +258,41 @@ void EntryProvider::saveUserEntry(const EntryConfig &config)
 	{
 		throw std::runtime_error("Only user entries can be saved");
 	}
+	QString transitPath = config.entryPath + ".transit";
+	QFile file{transitPath};
+	if(!file.open(QIODevice::WriteOnly))
+	{
+		throw std::runtime_error("Error: Can not open file for writing");
+	}
+	QTextStream outStream(&file);
+	if(!config.inherit.isEmpty())
+	{
+		outStream << "inherit" << " " << config.inherit << endl;
+	}
+	if(!config.name.isEmpty())
+	{
+		outStream << "name" << " " << config.name << endl;
+	}
+	if(!config.command.isEmpty())
+	{
+		outStream << "command" << " " << config.command << endl;
+	}
+	if(!config.icon.isNull())
+	{
+		outStream << "icon" << " " << config.icon.name() << endl;
+	}
+	outStream << "row" << " " << config.row << endl;
+	outStream << "col" << " " << config.col << endl;
+	outStream.flush();
+	file.close();
+
+	// Qts don't work if file already exists and c++17... don't want to pull in the fs lib yet
+	int ret = rename(transitPath.toStdString().c_str(), config.entryPath.toStdString().c_str());
+	if(ret != 0)
+	{
+		qDebug() << strerror(errno);
+		throw std::runtime_error("Failed to save entry file: Error during rename");
+	}
 }
 
 template <class T> void assignIfDestDefault(T &dest, const T &source)
