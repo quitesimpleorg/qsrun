@@ -214,7 +214,7 @@ QString EntryProvider::resolveEntryPath(QString path)
 	return {};
 }
 
-QVector<EntryConfig> EntryProvider::readConfig(QStringList paths)
+QVector<EntryConfig> EntryProvider::readConfig(QStringList paths, bool userentrymode)
 {
 	QVector<EntryConfig> result;
 	for(QString &configPath : paths)
@@ -228,6 +228,11 @@ QVector<EntryConfig> EntryProvider::readConfig(QStringList paths)
 			{
 				if(!entry->hidden)
 				{
+					if(userentrymode)
+					{
+						entry->userEntry = true;
+						entry->entryPath = path;
+					}
 					result.append(*entry);
 				}
 			}
@@ -238,7 +243,7 @@ QVector<EntryConfig> EntryProvider::readConfig(QStringList paths)
 
 QVector<EntryConfig> EntryProvider::getUserEntries()
 {
-	return readConfig(this->userEntriesDirsPaths);
+	return readConfig(this->userEntriesDirsPaths, true);
 }
 
 QVector<EntryConfig> EntryProvider::getSystemEntries()

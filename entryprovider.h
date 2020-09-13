@@ -18,7 +18,9 @@ class ConfigFormatException : public std::runtime_error
 class EntryConfig
 {
   public:
+	bool userEntry = false;
 	bool hidden = false;
+	QString entryPath;
 	QString key;
 	QString name;
 	QString command;
@@ -39,13 +41,14 @@ class EntryProvider
 	EntryConfig readqsrunFile(const QString &path);
 	EntryConfig readFromDesktopFile(const QString &path);
 	std::optional<EntryConfig> readEntryFromPath(const QString &path);
-	QVector<EntryConfig> readConfig(QStringList paths);
+	QVector<EntryConfig> readConfig(QStringList paths, bool userentrymode=false);
 	QString resolveEntryPath(QString path);
 
   public:
 	EntryProvider(QStringList userEntriesDirsPaths, QStringList systemEntriesDirsPaths);
 	QVector<EntryConfig> getUserEntries();
 	QVector<EntryConfig> getSystemEntries();
+	void saveUserEntry(const EntryConfig &config);
 };
 
 #endif // ENTRYPROVIDER_H
