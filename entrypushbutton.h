@@ -45,6 +45,7 @@ class EntryPushButton : public QPushButton
   protected:
 	void mousePressEvent(QMouseEvent *event);
 	void mouseMoveEvent(QMouseEvent *event);
+	QIcon resolveIcon(QString path);
 
   public:
 	EntryPushButton(const EntryConfig &config);

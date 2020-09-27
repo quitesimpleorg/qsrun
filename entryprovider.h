@@ -24,8 +24,8 @@ class EntryConfig
 	QString key;
 	QString name;
 	QString command;
+	QString iconPath;
 	QStringList arguments;
-	QIcon icon;
 	QString inherit;
 	int row = 0;
 	int col = 0;

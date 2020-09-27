@@ -56,7 +56,7 @@ EntryConfig EntryProvider::readFromDesktopFile(const QString &path)
 		}
 		if(key == "icon")
 		{
-			result.icon = QIcon::fromTheme(args);
+			result.iconPath = args;
 		}
 		if(key == "exec")
 		{
@@ -159,7 +159,7 @@ EntryConfig EntryProvider::readqsrunFile(const QString &path)
 		}
 		if(key == "icon")
 		{
-			result.icon = QIcon(splitted[1]);
+			result.iconPath = splitted[1];
 		}
 		if(key == "row")
 		{
@@ -277,9 +277,9 @@ void EntryProvider::saveUserEntry(const EntryConfig &config)
 	{
 		outStream << "command" << " " << config.command << endl;
 	}
-	if(!config.icon.isNull())
+	if(!config.iconPath.isEmpty())
 	{
-		outStream << "icon" << " " << config.icon.name() << endl;
+		outStream << "icon" << " " << config.iconPath << endl;
 	}
 	outStream << "row" << " " << config.row << endl;
 	outStream << "col" << " " << config.col << endl;
@@ -308,9 +308,9 @@ EntryConfig &EntryConfig::update(const EntryConfig &o)
 	assignIfDestDefault(this->arguments, o.arguments);
 	assignIfDestDefault(this->col, o.col);
 	assignIfDestDefault(this->command, o.command);
-	if(this->icon.isNull())
+	if(this->iconPath.isEmpty())
 	{
-		this->icon = o.icon;
+		this->iconPath = o.iconPath;
 	}
 	assignIfDestDefault(this->key, o.key);
 	assignIfDestDefault(this->name, o.name);

@@ -129,11 +129,10 @@ void Window::addToFavourites(const EntryPushButton &button)
 	std::pair<int, int> cell = getNextFreeCell();
 	EntryConfig userConfig = button.getEntryConfig();
 	userConfig.userEntry = true;
-	userConfig.icon = QIcon();
 	userConfig.row = cell.first;
 	userConfig.col = cell.second;
-	userConfig.inherit = userConfig.entryPath;
-	QFileInfo fi{userConfig.entryPath};
+	userConfig.inherit = button.getEntryConfig().entryPath;
+	QFileInfo fi{button.getEntryConfig().entryPath};
 	QString entryName = fi.completeBaseName() + ".qsrun";
 	userConfig.entryPath = this->settingsProvider->userEntriesPaths()[0] + "/" + entryName;
 	entryProvider->saveUserEntry(userConfig);
@@ -208,7 +207,7 @@ void Window::addPATHSuggestion(const QString &text)
 		e.col = 0;
 		e.row = 0;
 		e.command = suggestions[0];
-		e.icon = QIcon::fromTheme(suggestions[0]);
+		e.iconPath = suggestions[0];
 		EntryPushButton *button = createEntryButton(e);
 		clearGrid();
 		grid->addWidget(button, 0, 0);
@@ -285,7 +284,7 @@ void Window::lineEditTextChanged(QString text)
 				e.arguments = arguments.mid(1);
 			}
 			e.command = arguments[0];
-			e.icon = QIcon::fromTheme("utilities-terminal");
+			e.iconPath = "utilities-terminal";
 
 			EntryPushButton *button = createEntryButton(e);
 			clearGrid();

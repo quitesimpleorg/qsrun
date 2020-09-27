@@ -23,10 +23,11 @@ EntryPushButton::EntryPushButton(const EntryConfig &config) : QPushButton()
 {
 	this->setText(config.name);
 	this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-	this->setIcon(config.icon);
-	if(!config.icon.availableSizes().isEmpty())
+	QIcon icon = resolveIcon(config.iconPath);
+	this->setIcon(icon);
+	if(!icon.availableSizes().isEmpty())
 	{
-		auto sizes = config.icon.availableSizes();
+		auto sizes = icon.availableSizes();
 		QSize maxSize = sizes.first();
 		for(QSize &current : sizes)
 		{
@@ -42,6 +43,22 @@ EntryPushButton::EntryPushButton(const EntryConfig &config) : QPushButton()
 
 	systemEntryMenu.addAction("Add to favorites", [&] { emit addToFavourites(this->config); });
 	userEntryMenu.addAction("Delete", [&] { emit deleteRequested(this->config); });
+}
+
+QIcon EntryPushButton::resolveIcon(QString path)
+{
+	if(!path.isEmpty())
+	{
+		if(path[0] == '/')
+		{
+			return QIcon(path);
+		}
+		else
+		{
+			return QIcon::fromTheme(path);
+		}
+	}
+	return QIcon();
 }
 
 void EntryPushButton::emitOwnClicked()
