@@ -135,7 +135,15 @@ void Window::addToFavourites(const EntryPushButton &button)
 	QFileInfo fi{button.getEntryConfig().entryPath};
 	QString entryName = fi.completeBaseName() + ".qsrun";
 	userConfig.entryPath = this->settingsProvider->userEntriesPaths()[0] + "/" + entryName;
-	entryProvider->saveUserEntry(userConfig);
+	try
+	{
+		entryProvider->saveUserEntry(userConfig);
+	}
+	catch(std::exception &e)
+	{
+		QMessageBox::critical(this, "Failed to save item to favourites", e.what());
+		return;
+	}
 	userEntryButtons.append(createEntryButton(userConfig));
 }
 
