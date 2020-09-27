@@ -49,7 +49,7 @@ void EntryPushButton::emitOwnClicked()
 	emit clicked(this->config);
 }
 
-const EntryConfig &EntryPushButton::getEntryConfig()
+const EntryConfig &EntryPushButton::getEntryConfig() const
 {
 	return this->config;
 }

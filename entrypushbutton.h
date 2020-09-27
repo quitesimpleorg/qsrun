@@ -48,7 +48,7 @@ class EntryPushButton : public QPushButton
 
   public:
 	EntryPushButton(const EntryConfig &config);
-	const EntryConfig &getEntryConfig();
+	const EntryConfig &getEntryConfig() const;
 	void setEntryConfig(const EntryConfig &config);
 	void showShortcut();
 	void showName();

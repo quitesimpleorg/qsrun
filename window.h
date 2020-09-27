@@ -64,6 +64,7 @@ class Window : public QWidget
 	QVector<EntryPushButton *> generateEntryButtons(const QVector<EntryConfig> &userEntryButtons);
 	void keyPressEvent(QKeyEvent *event);
 	void buttonClick(const EntryPushButton &config);
+	void addToFavourites(const EntryPushButton &button);
 	QLineEdit *lineEdit;
 	QGridLayout *grid;
 	EntryPushButton *createEntryButton(const EntryConfig &config);
@@ -74,6 +75,8 @@ class Window : public QWidget
 	void initTreeWidgets();
 	QStringList generatePATHSuggestions(const QString &text);
 	void closeWindow();
+	std::pair<int, int> getNextFreeCell();
+
   private slots:
 	void lineEditReturnPressed();
 	void showCalculationResultContextMenu(const QPoint &point);

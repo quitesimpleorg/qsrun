@@ -124,6 +124,22 @@ void Window::buttonClick(const EntryPushButton &config)
 	this->closeWindow();
 }
 
+void Window::addToFavourites(const EntryPushButton &button)
+{
+	std::pair<int, int> cell = getNextFreeCell();
+	EntryConfig userConfig = button.getEntryConfig();
+	userConfig.userEntry = true;
+	userConfig.icon = QIcon();
+	userConfig.row = cell.first;
+	userConfig.col = cell.second;
+	userConfig.inherit = userConfig.entryPath;
+	QFileInfo fi{userConfig.entryPath};
+	QString entryName = fi.completeBaseName() + ".qsrun";
+	userConfig.entryPath = this->settingsProvider->userEntriesPaths()[0] + "/" + entryName;
+	entryProvider->saveUserEntry(userConfig);
+	initFromConfig();
+}
+
 void Window::closeWindow()
 {
 	if(settingsProvider->singleInstanceMode())
@@ -135,6 +151,27 @@ void Window::closeWindow()
 	{
 		qApp->quit();
 	}
+}
+
+std::pair<int, int> Window::getNextFreeCell()
+{
+	int maxRow = 0;
+	for(EntryPushButton *button : userEntryButtons)
+	{
+		if(button->getRow() > maxRow)
+		{
+			maxRow = button->getRow();
+		}
+	}
+	int maxCols = this->settingsProvider->getMaxCols();
+	for(int i = 1; i < maxCols; i++)
+	{
+		if(grid->itemAtPosition(maxRow, i) == 0)
+		{
+			return {maxRow, i + 1};
+		}
+	}
+	return {maxRow + 1, 0};
 }
 
 QStringList Window::generatePATHSuggestions(const QString &text)
@@ -356,6 +393,7 @@ EntryPushButton *Window::createEntryButton(const EntryConfig &entry)
 {
 	EntryPushButton *button = new EntryPushButton(entry);
 	connect(button, &EntryPushButton::clicked, this, &Window::buttonClick);
+	connect(button, &EntryPushButton::addToFavourites, this, &Window::addToFavourites);
 	return button;
 }
 
