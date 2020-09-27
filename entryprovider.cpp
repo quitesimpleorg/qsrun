@@ -295,6 +295,16 @@ void EntryProvider::saveUserEntry(const EntryConfig &config)
 	}
 }
 
+bool EntryProvider::deleteUserEntry(const EntryConfig &config)
+{
+	if(!config.userEntry || config.entryPath.isEmpty())
+	{
+		throw std::runtime_error("Only user entries can be saved");
+	}
+	QFile file { config.entryPath };
+	return file.remove();
+}
+
 template <class T> void assignIfDestDefault(T &dest, const T &source)
 {
 	if(dest == T())

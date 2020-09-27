@@ -39,7 +39,7 @@ class EntryPushButton : public QPushButton
 
   signals:
 	void clicked(const EntryConfig &config);
-	void deleteRequested(const EntryConfig &config);
+	void deleteRequested(EntryConfig &config);
 	void addToFavourites(const EntryConfig &config);
 
   protected:

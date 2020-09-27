@@ -147,6 +147,12 @@ void Window::addToFavourites(const EntryPushButton &button)
 	userEntryButtons.append(createEntryButton(userConfig));
 }
 
+void Window::deleteEntry(EntryConfig &config)
+{
+	this->entryProvider->deleteUserEntry(config);
+	initFromConfig();
+}
+
 void Window::closeWindow()
 {
 	if(settingsProvider->singleInstanceMode())
@@ -422,6 +428,7 @@ EntryPushButton *Window::createEntryButton(const EntryConfig &entry)
 	EntryPushButton *button = new EntryPushButton(entry);
 	connect(button, &EntryPushButton::clicked, this, &Window::buttonClick);
 	connect(button, &EntryPushButton::addToFavourites, this, &Window::addToFavourites);
+	connect(button, &EntryPushButton::deleteRequested, this, &Window::deleteEntry);
 	return button;
 }
 

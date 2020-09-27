@@ -50,6 +50,7 @@ class EntryProvider
 	QVector<EntryConfig> getUserEntries();
 	QVector<EntryConfig> getSystemEntries();
 	void saveUserEntry(const EntryConfig &config);
+	bool deleteUserEntry(const EntryConfig &config);
 };
 
 #endif // ENTRYPROVIDER_H

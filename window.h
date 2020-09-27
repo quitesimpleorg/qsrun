@@ -65,6 +65,7 @@ class Window : public QWidget
 	void keyPressEvent(QKeyEvent *event);
 	void buttonClick(const EntryPushButton &button);
 	void addToFavourites(const EntryPushButton &button);
+	void deleteEntry(EntryConfig &config);
 	QLineEdit *lineEdit;
 	QGridLayout *grid;
 	EntryPushButton *createEntryButton(const EntryConfig &config);
