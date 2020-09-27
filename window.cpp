@@ -136,7 +136,7 @@ void Window::addToFavourites(const EntryPushButton &button)
 	QString entryName = fi.completeBaseName() + ".qsrun";
 	userConfig.entryPath = this->settingsProvider->userEntriesPaths()[0] + "/" + entryName;
 	entryProvider->saveUserEntry(userConfig);
-	initFromConfig();
+	userEntryButtons.append(createEntryButton(userConfig));
 }
 
 void Window::closeWindow()
@@ -154,23 +154,44 @@ void Window::closeWindow()
 
 std::pair<int, int> Window::getNextFreeCell()
 {
-	int maxRow = 0;
-	for(EntryPushButton *button : userEntryButtons)
-	{
-		if(button->getRow() > maxRow)
+	/* Not the most efficient way perhaps but for now it'll do */
+	std::sort(userEntryButtons.begin(), userEntryButtons.end(), [](EntryPushButton *a, EntryPushButton *b) {
+		const EntryConfig &config_a = a->getEntryConfig();
+		const EntryConfig &config_b = b->getEntryConfig();
+		if(config_a.row < config_b.row)
 		{
-			maxRow = button->getRow();
+			return true;
 		}
-	}
+		if(config_a.row > config_b.row)
+		{
+			return false;
+		}
+		return config_a.col < config_b.col;
+	});
+
+	int expectedRow = 1;
+	int expectedCol = 1;
 	int maxCols = this->settingsProvider->getMaxCols();
-	for(int i = 1; i < maxCols; i++)
+	for(EntryPushButton *current : userEntryButtons)
 	{
-		if(grid->itemAtPosition(maxRow, i) == 0)
+		int currentRow = current->getEntryConfig().row;
+		int currentCol = current->getEntryConfig().col;
+
+		if(currentRow != expectedRow || currentCol != expectedCol)
 		{
-			return {maxRow, i + 1};
+			return {expectedRow, expectedCol};
+		}
+		if(expectedCol == maxCols)
+		{
+			expectedCol = 1;
+			++expectedRow;
+		}
+		else
+		{
+			++expectedCol;
 		}
 	}
-	return {maxRow + 1, 0};
+	return {expectedRow, expectedCol};
 }
 
 QStringList Window::generatePATHSuggestions(const QString &text)
