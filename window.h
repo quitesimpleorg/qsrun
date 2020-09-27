@@ -63,7 +63,7 @@ class Window : public QWidget
 	void keyReleaseEvent(QKeyEvent *event);
 	QVector<EntryPushButton *> generateEntryButtons(const QVector<EntryConfig> &userEntryButtons);
 	void keyPressEvent(QKeyEvent *event);
-	void buttonClick(const EntryPushButton &config);
+	void buttonClick(const EntryPushButton &button);
 	void addToFavourites(const EntryPushButton &button);
 	QLineEdit *lineEdit;
 	QGridLayout *grid;

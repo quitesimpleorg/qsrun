@@ -118,9 +118,9 @@ void Window::populateGrid(const QVector<EntryPushButton *> &list)
 	}
 }
 
-void Window::buttonClick(const EntryPushButton &config)
+void Window::buttonClick(const EntryPushButton &button)
 {
-	QProcess::startDetached(config.getCommand(), config.getArguments());
+	QProcess::startDetached(button.getCommand(), button.getArguments());
 	this->closeWindow();
 }
 
