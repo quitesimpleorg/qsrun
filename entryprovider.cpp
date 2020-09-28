@@ -325,5 +325,9 @@ EntryConfig &EntryConfig::update(const EntryConfig &o)
 	assignIfDestDefault(this->key, o.key);
 	assignIfDestDefault(this->name, o.name);
 	assignIfDestDefault(this->row, o.row);
+	assignIfDestDefault(this->hidden, o.hidden);
+	assignIfDestDefault(this->inherit, o.inherit);
+	assignIfDestDefault(this->entryPath, o.entryPath);
+	assignIfDestDefault(this->userEntry, o.userEntry);
 	return *this;
 }
