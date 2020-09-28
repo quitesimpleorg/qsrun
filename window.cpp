@@ -127,7 +127,7 @@ void Window::executeConfig(const EntryConfig &config)
 void Window::addToFavourites(const EntryConfig &config)
 {
 	std::pair<int, int> cell = getNextFreeCell();
-	EntryConfig userConfig = config;
+	EntryConfig userConfig;
 	userConfig.userEntry = true;
 	userConfig.row = cell.first;
 	userConfig.col = cell.second;
@@ -144,6 +144,10 @@ void Window::addToFavourites(const EntryConfig &config)
 		QMessageBox::critical(this, "Failed to save item to favourites", e.what());
 		return;
 	}
+	/*we only want to save a minimal, inherited config. but it should be a "complete" button
+	when we add it to the favourites. the alternative would be to reload the whole config,
+	but that's probably overkill. */
+	userConfig.update(config);
 	userEntryButtons.append(createEntryButton(userConfig));
 }
 
