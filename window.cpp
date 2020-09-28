@@ -118,7 +118,7 @@ void Window::populateGrid(const QVector<EntryPushButton *> &list)
 	}
 }
 
-void Window::buttonClick(const EntryConfig &config)
+void Window::executeConfig(const EntryConfig &config)
 {
 	QProcess::startDetached(config.command, config.arguments);
 	this->closeWindow();
@@ -369,7 +369,7 @@ void Window::keyPressEvent(QKeyEvent *event)
 							   [&key](const EntryPushButton *y) { return y->getShortcutKey() == key; });
 		if(it != buttonsInGrid.end())
 		{
-			buttonClick((*it)->getEntryConfig());
+			executeConfig((*it)->getEntryConfig());
 		}
 	}
 	QWidget::keyPressEvent(event);
@@ -426,7 +426,7 @@ void Window::filterGridFor(QString filter)
 EntryPushButton *Window::createEntryButton(const EntryConfig &entry)
 {
 	EntryPushButton *button = new EntryPushButton(entry);
-	connect(button, &EntryPushButton::clicked, this, &Window::buttonClick);
+	connect(button, &EntryPushButton::clicked, this, &Window::executeConfig);
 	connect(button, &EntryPushButton::addToFavourites, this, &Window::addToFavourites);
 	connect(button, &EntryPushButton::deleteRequested, this, &Window::deleteEntry);
 	return button;
@@ -443,7 +443,7 @@ void Window::lineEditReturnPressed()
 
 	if(buttonsInGrid.length() > 0 && this->lineEdit->text().length() > 0)
 	{
-		buttonClick(buttonsInGrid[0]->getEntryConfig());
+		executeConfig(buttonsInGrid[0]->getEntryConfig());
 		return;
 	}
 }
