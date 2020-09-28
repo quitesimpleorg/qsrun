@@ -155,7 +155,7 @@ EntryConfig EntryProvider::readqsrunFile(const QString &path)
 		}
 		if(key == "name")
 		{
-			result.name = splitted[1];
+			result.name = splitted.mid(1).join(' ');
 		}
 		if(key == "icon")
 		{
