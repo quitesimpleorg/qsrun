@@ -118,21 +118,21 @@ void Window::populateGrid(const QVector<EntryPushButton *> &list)
 	}
 }
 
-void Window::buttonClick(const EntryPushButton &button)
+void Window::buttonClick(const EntryConfig &config)
 {
-	QProcess::startDetached(button.getCommand(), button.getArguments());
+	QProcess::startDetached(config.command, config.arguments);
 	this->closeWindow();
 }
 
-void Window::addToFavourites(const EntryPushButton &button)
+void Window::addToFavourites(const EntryConfig &config)
 {
 	std::pair<int, int> cell = getNextFreeCell();
-	EntryConfig userConfig = button.getEntryConfig();
+	EntryConfig userConfig = config;
 	userConfig.userEntry = true;
 	userConfig.row = cell.first;
 	userConfig.col = cell.second;
-	userConfig.inherit = button.getEntryConfig().entryPath;
-	QFileInfo fi{button.getEntryConfig().entryPath};
+	userConfig.inherit = userConfig.entryPath;
+	QFileInfo fi{userConfig.entryPath};
 	QString entryName = fi.completeBaseName() + ".qsrun";
 	userConfig.entryPath = this->settingsProvider->userEntriesPaths()[0] + "/" + entryName;
 	try
@@ -369,7 +369,7 @@ void Window::keyPressEvent(QKeyEvent *event)
 							   [&key](const EntryPushButton *y) { return y->getShortcutKey() == key; });
 		if(it != buttonsInGrid.end())
 		{
-			buttonClick(**it);
+			buttonClick((*it)->getEntryConfig());
 		}
 	}
 	QWidget::keyPressEvent(event);
@@ -443,7 +443,7 @@ void Window::lineEditReturnPressed()
 
 	if(buttonsInGrid.length() > 0 && this->lineEdit->text().length() > 0)
 	{
-		buttonClick(*buttonsInGrid[0]);
+		buttonClick(buttonsInGrid[0]->getEntryConfig());
 		return;
 	}
 }
