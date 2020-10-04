@@ -134,7 +134,16 @@ void Window::addToFavourites(const EntryConfig &config)
 	userConfig.inherit = config.entryPath;
 	QFileInfo fi{config.entryPath};
 	QString entryName = fi.completeBaseName() + ".qsrun";
-	userConfig.entryPath = this->settingsProvider->userEntriesPaths()[0] + "/" + entryName;
+	QString entryPath;
+	if(config.type == EntryType::SYSTEM)
+	{
+		entryPath = this->settingsProvider->userEntriesPaths()[0] + "/" + entryName;
+	}
+	else
+	{
+		entryPath = fi.absoluteDir().absoluteFilePath(entryName);
+	}
+	userConfig.entryPath = entryPath;
 	try
 	{
 		entryProvider->saveUserEntry(userConfig);
