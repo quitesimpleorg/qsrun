@@ -112,83 +112,75 @@ EntryConfig EntryProvider::readqsrunFile(const QString &path)
 		// TODO: better exception class
 		throw new std::runtime_error("Failed to open file");
 	}
+	QHash<QString, QString> map;
 	QTextStream stream(&file);
 	while(!stream.atEnd())
 	{
 		QString line = stream.readLine();
-		QStringList splitted = line.split(" ");
-		if(splitted.length() < 2)
+
+		int spacePos = line.indexOf(' ');
+		if(spacePos == -1)
 		{
 			throw new ConfigFormatException("misformated line in .qsrun config file " + path.toStdString());
 		}
-		QString key = splitted[0];
-		if(key == "arguments")
+
+		QString key = line.mid(0, spacePos);
+		QString value = line.mid(spacePos+1);
+
+		QStringList splitted = line.split(" ");
+		if(key == "" || value == "")
 		{
-			auto args = splitted.mid(1);
-			QString merged;
-			for(QString &str : args)
+			throw new ConfigFormatException("empty key or value in .qsrun config file " + path.toStdString());
+		}
+		map[key] = value;
+	}
+	if(map.contains("arguments"))
+	{
+		auto args = map["arguments"].split(' ');
+		QString merged;
+		for(QString &str : args)
+		{
+			if(str.startsWith('"') && !str.endsWith("'"))
 			{
-				if(str.startsWith('"') && !str.endsWith("'"))
-				{
-					merged += str.mid(1) + " ";
-				}
-				else if(str.endsWith('"'))
-				{
-					str.chop(1);
-					merged += str;
-					result.arguments.append(merged);
-					merged = "";
-				}
-				else if(merged != "")
-				{
-					merged += str + " ";
-				}
-				else
-				{
-					result.arguments.append(str);
-				}
+				merged += str.mid(1) + " ";
 			}
-			if(merged != "")
+			else if(str.endsWith('"'))
 			{
-				throw ConfigFormatException("non-closed \" in config file " + path.toStdString());
+				str.chop(1);
+				merged += str;
+				result.arguments.append(merged);
+				merged = "";
 			}
-		}
-		if(key == "name")
-		{
-			result.name = splitted.mid(1).join(' ');
-		}
-		if(key == "icon")
-		{
-			result.iconPath = splitted[1];
-		}
-		if(key == "row")
-		{
-			result.row = splitted[1].toInt();
-		}
-		if(key == "col")
-		{
-			result.col = splitted[1].toInt();
-		}
-		if(key == "command")
-		{
-			result.command = splitted[1];
-		}
-		if(key == "key")
-		{
-			// QKeySequence sequence(splitted[1]);
-			// result.keySequence = sequence;
-			result.key = splitted[1].toLower();
-		}
-		if(key == "inherit")
-		{
-			result.inherit = splitted[1];
-			auto entry = readEntryFromPath(resolveEntryPath(result.inherit));
-			if(entry)
+			else if(merged != "")
 			{
-				inheritedConfig = *entry;
+				merged += str + " ";
 			}
+			else
+			{
+				result.arguments.append(str);
+			}
+		}
+		if(merged != "")
+		{
+			throw ConfigFormatException("non-closed \" in config file " + path.toStdString());
 		}
 	}
+	if(map.contains("inherit"))
+	{
+		result.inherit = map["inherit"];
+		auto entry = readEntryFromPath(resolveEntryPath(result.inherit));
+		if(entry)
+		{
+			inheritedConfig = *entry;
+		}
+	}
+	result.key = map["key"].toLower();
+	result.command = map["command"];
+	result.col = map["col"].toInt();
+	result.row = map["row"].toInt();
+	result.iconPath = map["icon"];
+	result.name = map["name"];
+
 	return result.update(inheritedConfig);
 }
 
