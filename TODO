@@ -1,4 +1,0 @@
- - Investigate memory leaks (relevant now that we have a single user mode,
- so qsrun may stay open after launch)
- - Provide --help
- - ESC/CTRL+Q close the app. May not be expected behaviour
