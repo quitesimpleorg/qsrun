@@ -298,6 +298,8 @@ void EntryProvider::saveUserEntry(const EntryConfig &config)
 	}
 	outStream << "row" << " " << config.row << endl;
 	outStream << "col" << " " << config.col << endl;
+	outStream << "hidden" << " " << config.hidden << endl;
+	outStream << "key" << " " << config.key << endl;
 	if(config.type == EntryType::USER)
 	{
 		if(!config.name.isEmpty())
@@ -311,6 +313,10 @@ void EntryProvider::saveUserEntry(const EntryConfig &config)
 		if(!config.iconPath.isEmpty())
 		{
 			outStream << "icon" << " " << config.iconPath << endl;
+		}
+		if(!config.arguments.empty())
+		{
+			outStream << "arguments" << " " << config.arguments.join(' ') << endl;
 		}
 	}
 
