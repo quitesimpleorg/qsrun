@@ -27,6 +27,7 @@ class EntryConfig
   public:
 	EntryType type = SYSTEM;
 	bool hidden = false;
+	bool isTerminalCommand = false;
 	QString entryPath;
 	QString key;
 	QString name;

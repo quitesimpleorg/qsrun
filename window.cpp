@@ -120,7 +120,16 @@ void Window::populateGrid(const QVector<EntryPushButton *> &list)
 
 void Window::executeConfig(const EntryConfig &config)
 {
-	QProcess::startDetached(config.command, config.arguments);
+	if(config.isTerminalCommand)
+	{
+		QString cmd = settingsProvider->getTerminalCommand();
+		cmd.replace("%c", config.command);
+		QProcess::startDetached(cmd);
+	}
+	else
+	{
+		QProcess::startDetached(config.command, config.arguments);
+	}
 	this->closeWindow();
 }
 

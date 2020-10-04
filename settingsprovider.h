@@ -15,6 +15,7 @@ class SettingsProvider
 	virtual QStringList systemApplicationsEntriesPaths() const;
 	virtual int getMaxCols() const;
 	virtual bool singleInstanceMode() const;
+	QString getTerminalCommand() const;
 };
 
 #endif // SETTINGSPROVIDER_H

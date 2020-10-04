@@ -79,6 +79,10 @@ EntryConfig EntryProvider::readFromDesktopFile(const QString &path)
 		{
 			result.hidden = args == "true";
 		}
+		if(key == "terminal")
+		{
+			result.isTerminalCommand = args == "true";
+		}
 	}
 	result.type = EntryType::SYSTEM;
 	return result;

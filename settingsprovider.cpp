@@ -28,3 +28,8 @@ bool SettingsProvider::singleInstanceMode() const
 {
 	return settings->value("singleInstance", true).toBool();
 }
+
+QString SettingsProvider::getTerminalCommand() const
+{
+	return settings->value("terminal", "/usr/bin/x-terminal-emulator -e %c").toString();
+}
