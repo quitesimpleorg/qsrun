@@ -94,7 +94,7 @@ void EntryPushButton::mousePressEvent(QMouseEvent *event)
 	}
 	if(event->button() == Qt::RightButton)
 	{
-		if(this->config.userEntry)
+		if(this->config.type == EntryType::USER || this->config.type == EntryType::INHERIT)
 		{
 			this->userEntryMenu.exec(QCursor::pos());
 		}
@@ -108,7 +108,7 @@ void EntryPushButton::mousePressEvent(QMouseEvent *event)
 
 void EntryPushButton::mouseMoveEvent(QMouseEvent *event)
 {
-	if(!this->config.userEntry)
+	if(this->config.type == EntryType::SYSTEM)
 	{
 		return;
 	}

@@ -15,10 +15,17 @@ class ConfigFormatException : public std::runtime_error
 	}
 };
 
+enum EntryType
+{
+	USER,
+	INHERIT,
+	SYSTEM
+};
+
 class EntryConfig
 {
   public:
-	bool userEntry = false;
+	EntryType type = SYSTEM;
 	bool hidden = false;
 	QString entryPath;
 	QString key;
@@ -42,7 +49,7 @@ class EntryProvider
 	EntryConfig readqsrunFile(const QString &path);
 	EntryConfig readFromDesktopFile(const QString &path);
 	std::optional<EntryConfig> readEntryFromPath(const QString &path);
-	QVector<EntryConfig> readConfig(QStringList paths, bool userentrymode = false);
+	QVector<EntryConfig> readConfig(QStringList paths);
 	QString resolveEntryPath(QString path);
 
   public:

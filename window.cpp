@@ -128,11 +128,11 @@ void Window::addToFavourites(const EntryConfig &config)
 {
 	std::pair<int, int> cell = getNextFreeCell();
 	EntryConfig userConfig;
-	userConfig.userEntry = true;
+	userConfig.type = EntryType::INHERIT;
 	userConfig.row = cell.first;
 	userConfig.col = cell.second;
-	userConfig.inherit = userConfig.entryPath;
-	QFileInfo fi{userConfig.entryPath};
+	userConfig.inherit = config.entryPath;
+	QFileInfo fi{config.entryPath};
 	QString entryName = fi.completeBaseName() + ".qsrun";
 	userConfig.entryPath = this->settingsProvider->userEntriesPaths()[0] + "/" + entryName;
 	try
