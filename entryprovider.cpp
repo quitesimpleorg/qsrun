@@ -134,6 +134,19 @@ EntryConfig EntryProvider::readqsrunFile(const QString &path)
 		}
 		map[key] = value;
 	}
+	if(map.contains("inherit"))
+	{
+		auto entry = readEntryFromPath(map["inherit"]);
+		if(entry)
+		{
+			result = entry.value();
+			result.inherit = map["inherit"];
+		}
+		else
+		{
+			throw new ConfigFormatException("Error attempting to read inherited entry");
+		}
+	}
 	if(map.contains("arguments"))
 	{
 		auto args = map["arguments"].split(' ');
@@ -165,23 +178,19 @@ EntryConfig EntryProvider::readqsrunFile(const QString &path)
 			throw ConfigFormatException("non-closed \" in config file " + path.toStdString());
 		}
 	}
-	if(map.contains("inherit"))
-	{
-		result.inherit = map["inherit"];
-		auto entry = readEntryFromPath(resolveEntryPath(result.inherit));
-		if(entry)
+	auto assignIfSourceNotEmpty = [](QString source, QString &val) {
+		if(!source.isEmpty())
 		{
-			inheritedConfig = *entry;
+			val = source;
 		}
-	}
-	result.key = map["key"].toLower();
-	result.command = map["command"];
+	};
+	assignIfSourceNotEmpty(map["key"].toLower(), result.key);
+	assignIfSourceNotEmpty(map["command"], result.command);
+	assignIfSourceNotEmpty(map["icon"], result.iconPath);
+	assignIfSourceNotEmpty(map["name"], result.name);
 	result.col = map["col"].toInt();
 	result.row = map["row"].toInt();
-	result.iconPath = map["icon"];
-	result.name = map["name"];
-
-	return result.update(inheritedConfig);
+	return result;
 }
 
 QString EntryProvider::resolveEntryPath(QString path)
