@@ -223,6 +223,7 @@ EntryConfig EntryProvider::readqsrunFile(const QString &path)
 	}
 	result.col = map["col"].toInt();
 	result.row = map["row"].toInt();
+	result.isTerminalCommand = map["terminal"] == "true";
 	return result;
 }
 
