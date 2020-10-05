@@ -23,7 +23,15 @@ EntryPushButton::EntryPushButton(const EntryConfig &config) : QPushButton()
 {
 	this->setText(config.name);
 	this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-	QIcon icon = resolveIcon(config.iconPath);
+	QIcon icon;
+	if(config.isTerminalCommand && config.iconPath.isEmpty())
+	{
+		icon = resolveIcon("utilities-terminal");
+	}
+	else
+	{
+		icon = resolveIcon(config.iconPath);
+	}
 	this->setIcon(icon);
 	if(!icon.availableSizes().isEmpty())
 	{
