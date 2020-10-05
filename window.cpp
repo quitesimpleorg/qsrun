@@ -123,7 +123,7 @@ void Window::executeConfig(const EntryConfig &config)
 	if(config.isTerminalCommand)
 	{
 		QString cmd = settingsProvider->getTerminalCommand();
-		cmd.replace("%c", config.command);
+		cmd.replace("%c", config.command + " " + config.arguments.join(' '));
 		QProcess::startDetached(cmd);
 	}
 	else
