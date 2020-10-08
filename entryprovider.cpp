@@ -13,6 +13,11 @@ EntryProvider::EntryProvider(QStringList userEntriesDirsPaths, QStringList syste
 					   << "%u";
 }
 
+bool EntryProvider::isSavable(const EntryConfig &config) const
+{
+	return ! config.entryPath.isEmpty() && (config.type == EntryType::USER || config.type == EntryType::INHERIT);
+}
+
 EntryConfig EntryProvider::readFromDesktopFile(const QString &path)
 {
 	EntryConfig result;
@@ -285,7 +290,7 @@ QVector<EntryConfig> EntryProvider::getSystemEntries()
 
 void EntryProvider::saveUserEntry(const EntryConfig &config)
 {
-	if(config.type == EntryType::SYSTEM || config.entryPath.isEmpty())
+	if(!isSavable(config))
 	{
 		throw std::runtime_error("Only user/inherited entries can be saved");
 	}
@@ -339,7 +344,7 @@ void EntryProvider::saveUserEntry(const EntryConfig &config)
 
 bool EntryProvider::deleteUserEntry(const EntryConfig &config)
 {
-	if(config.type == EntryType::SYSTEM || config.entryPath.isEmpty())
+	if(!isSavable(config))
 	{
 		throw std::runtime_error("Only user/inherited entries can be deleted");
 	}

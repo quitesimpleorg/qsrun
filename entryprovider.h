@@ -55,6 +55,7 @@ class EntryProvider
 
   public:
 	EntryProvider(QStringList userEntriesDirsPaths, QStringList systemEntriesDirsPaths);
+	bool isSavable(const EntryConfig &config) const;
 	QVector<EntryConfig> getUserEntries();
 	QVector<EntryConfig> getSystemEntries();
 	void saveUserEntry(const EntryConfig &config);
