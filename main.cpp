@@ -14,6 +14,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 #include <QApplication>
+#include <QCommandLineParser>
 #include <QFuture>
 #include <QFutureWatcher>
 #include <QtConcurrent/QtConcurrentRun>
@@ -32,7 +33,14 @@ int main(int argc, char *argv[])
 	QDir dir;
 	if(argc >= 2)
 	{
-		configDirectoryPath = QCoreApplication::arguments().at(1);
+		QCommandLineParser parser;
+		parser.addOptions({
+			{"new-instance", "Launch a new instance, ignoring any running ones"},
+			{"config", "Use supplied config dir instead of default"},
+		});
+		parser.addHelpOption();
+		parser.process(app.arguments());
+		configDirectoryPath = parser.value("config");
 		if(!dir.exists(configDirectoryPath))
 		{
 			QMessageBox::warning(nullptr, "Directory not found", configDirectoryPath + " was not found");
@@ -43,30 +51,30 @@ int main(int argc, char *argv[])
 	{
 		configDirectoryPath = QDir::homePath() + "/.config/qsrun/";
 	}
-	qRegisterMetaType<QVector<QString> >("QVector<QString>");
-
+	qRegisterMetaType<QVector<QString>>("QVector<QString>");
 
 	if(!dir.exists(configDirectoryPath))
 	{
 		if(!dir.mkdir(configDirectoryPath))
 		{
-			QMessageBox::warning(nullptr, "Failed to create dir", configDirectoryPath + " was not found and could not be created!");
+			QMessageBox::warning(nullptr, "Failed to create dir",
+								 configDirectoryPath + " was not found and could not be created!");
 			return 1;
 		}
 	}
 
 	QSettings settings(configDirectoryPath + "qsrun.config", QSettings::NativeFormat);
 
-	SettingsProvider settingsProvider { settings };
+	SettingsProvider settingsProvider{settings};
 	EntryProvider entryProvider(settingsProvider.userEntriesPaths(), settingsProvider.systemApplicationsEntriesPaths());
-	//TODO if setting single instance mode
+	// TODO if setting single instance mode
 	QLocalSocket localSocket;
 	localSocket.connectToServer("/tmp/qsrun.socket");
 	SingleInstanceServer server;
 	if(localSocket.isOpen() && localSocket.isWritable())
 	{
 		QDataStream stream(&localSocket);
-		stream << (int)0x01; //maximize
+		stream << (int)0x01; // maximize
 		localSocket.flush();
 		localSocket.waitForBytesWritten();
 		localSocket.disconnectFromServer();
@@ -78,8 +86,8 @@ int main(int argc, char *argv[])
 		{
 			qDebug() << "Failed to listen on socket!";
 		}
-		Window *w = new Window { entryProvider, settingsProvider };
-		QObject::connect(&server, &SingleInstanceServer::receivedMaximizationRequest, [&w]{
+		Window *w = new Window{entryProvider, settingsProvider};
+		QObject::connect(&server, &SingleInstanceServer::receivedMaximizationRequest, [&w] {
 			if(w != nullptr)
 			{
 				qInfo() << "maximizing as requested by other instance";
@@ -91,10 +99,7 @@ int main(int argc, char *argv[])
 		});
 		w->showMaximized();
 		w->focusInput();
-
 	}
-
-
 
 	return app.exec();
 }
