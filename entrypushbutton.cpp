@@ -106,7 +106,7 @@ void EntryPushButton::mousePressEvent(QMouseEvent *event)
 		{
 			this->userEntryMenu.exec(QCursor::pos());
 		}
-		else
+		else if(this->config.type == EntryType::SYSTEM)
 		{
 			this->systemEntryMenu.exec(QCursor::pos());
 		}

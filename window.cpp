@@ -266,6 +266,7 @@ void Window::addPATHSuggestion(const QString &text)
 		e.row = 0;
 		e.command = suggestions[0];
 		e.iconPath = suggestions[0];
+		e.type = EntryType::DYNAMIC;
 		EntryPushButton *button = createEntryButton(e);
 		clearGrid();
 		grid->addWidget(button, 0, 0);
@@ -343,6 +344,7 @@ void Window::lineEditTextChanged(QString text)
 			}
 			e.command = arguments[0];
 			e.iconPath = "utilities-terminal";
+			e.type = EntryType::DYNAMIC;
 
 			EntryPushButton *button = createEntryButton(e);
 			clearGrid();

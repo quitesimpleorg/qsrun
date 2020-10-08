@@ -19,7 +19,8 @@ enum EntryType
 {
 	USER,
 	INHERIT,
-	SYSTEM
+	SYSTEM,
+	DYNAMIC
 };
 
 class EntryConfig
