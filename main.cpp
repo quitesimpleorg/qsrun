@@ -41,16 +41,17 @@ int main(int argc, char *argv[])
 		parser.addHelpOption();
 		parser.process(app.arguments());
 		configDirectoryPath = parser.value("config");
-		if(!dir.exists(configDirectoryPath))
+		if(!configDirectoryPath.isEmpty() && !dir.exists(configDirectoryPath))
 		{
 			QMessageBox::warning(nullptr, "Directory not found", configDirectoryPath + " was not found");
 			return 1;
 		}
 	}
-	else
+	if(configDirectoryPath.isEmpty())
 	{
 		configDirectoryPath = QDir::homePath() + "/.config/qsrun/";
 	}
+
 	qRegisterMetaType<QVector<QString>>("QVector<QString>");
 
 	if(!dir.exists(configDirectoryPath))
