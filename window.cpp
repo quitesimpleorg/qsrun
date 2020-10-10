@@ -120,7 +120,7 @@ void Window::populateGrid(const QVector<EntryPushButton *> &list)
 
 void Window::executeConfig(const EntryConfig &config)
 {
-	if(config.isTerminalCommand)
+	if(config.isTerminalCommand || QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier))
 	{
 		QString cmd = settingsProvider->getTerminalCommand();
 		cmd.replace("%c", config.command);
