@@ -31,6 +31,7 @@ int main(int argc, char *argv[])
 	QApplication app(argc, argv);
 	QString configDirectoryPath;
 	QDir dir;
+	bool newInstanceRequested = false;
 	if(argc >= 2)
 	{
 		QCommandLineParser parser;
@@ -41,6 +42,8 @@ int main(int argc, char *argv[])
 		parser.addHelpOption();
 		parser.process(app.arguments());
 		configDirectoryPath = parser.value("config");
+		newInstanceRequested = parser.isSet("new-instance");
+
 		if(!configDirectoryPath.isEmpty() && !dir.exists(configDirectoryPath))
 		{
 			QMessageBox::warning(nullptr, "Directory not found", configDirectoryPath + " was not found");
@@ -69,26 +72,35 @@ int main(int argc, char *argv[])
 	SettingsProvider settingsProvider{settings};
 	EntryProvider entryProvider(settingsProvider.userEntriesPaths(), settingsProvider.systemApplicationsEntriesPaths());
 
-	QLocalSocket localSocket;
-	localSocket.connectToServer(settingsProvider.socketPath());
-	SingleInstanceServer server;
-	if(localSocket.isOpen() && localSocket.isWritable())
+	SingleInstanceServer *server = nullptr;
+
+	bool singleInstanceMode = !newInstanceRequested && settingsProvider.singleInstanceMode();
+	if(singleInstanceMode)
 	{
-		QDataStream stream(&localSocket);
-		stream << (int)0x01; // maximize
-		localSocket.flush();
-		localSocket.waitForBytesWritten();
-		localSocket.disconnectFromServer();
-		return 0;
-	}
-	else
-	{
-		if(!server.listen(settingsProvider.socketPath()))
+		QLocalSocket localSocket;
+		localSocket.connectToServer(settingsProvider.socketPath());
+		if(localSocket.isOpen() && localSocket.isWritable())
+		{
+			QDataStream stream(&localSocket);
+			stream << (int)0x01; // maximize
+			localSocket.flush();
+			localSocket.waitForBytesWritten();
+			localSocket.disconnectFromServer();
+			return 0;
+		}
+
+		server = new SingleInstanceServer();
+		if(!server->listen(settingsProvider.socketPath()))
 		{
 			qDebug() << "Failed to listen on socket!";
+			return 1;
 		}
-		Window *w = new Window{entryProvider, settingsProvider};
-		QObject::connect(&server, &SingleInstanceServer::receivedMaximizationRequest, [&w] {
+	}
+
+	Window *w = new Window{entryProvider, settingsProvider};
+	if(singleInstanceMode && server != nullptr)
+	{
+		QObject::connect(server, &SingleInstanceServer::receivedMaximizationRequest, [&w] {
 			if(w != nullptr)
 			{
 				qInfo() << "maximizing as requested by other instance";
@@ -98,9 +110,10 @@ int main(int argc, char *argv[])
 				w->focusInput();
 			}
 		});
-		w->showMaximized();
-		w->focusInput();
 	}
+
+	w->showMaximized();
+	w->focusInput();
 
 	return app.exec();
 }
