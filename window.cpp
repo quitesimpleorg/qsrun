@@ -381,7 +381,10 @@ void Window::keyPressEvent(QKeyEvent *event)
 
 		for(EntryPushButton *button : buttonsInGrid)
 		{
-			button->showShortcut();
+			if(!button->getEntryConfig().key.isEmpty())
+			{
+				button->showShortcut();
+			}
 		}
 
 		QKeySequence seq(event->key());
