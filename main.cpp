@@ -68,9 +68,9 @@ int main(int argc, char *argv[])
 
 	SettingsProvider settingsProvider{settings};
 	EntryProvider entryProvider(settingsProvider.userEntriesPaths(), settingsProvider.systemApplicationsEntriesPaths());
-	// TODO if setting single instance mode
+
 	QLocalSocket localSocket;
-	localSocket.connectToServer("/tmp/qsrun.socket");
+	localSocket.connectToServer(settingsProvider.socketPath());
 	SingleInstanceServer server;
 	if(localSocket.isOpen() && localSocket.isWritable())
 	{
@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		if(!server.listen("/tmp/qsrun.socket"))
+		if(!server.listen(settingsProvider.socketPath()))
 		{
 			qDebug() << "Failed to listen on socket!";
 		}

@@ -16,6 +16,7 @@ class SettingsProvider
 	virtual int getMaxCols() const;
 	virtual bool singleInstanceMode() const;
 	QString getTerminalCommand() const;
+	QString socketPath() const;
 };
 
 #endif // SETTINGSPROVIDER_H

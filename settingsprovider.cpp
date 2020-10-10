@@ -33,3 +33,8 @@ QString SettingsProvider::getTerminalCommand() const
 {
 	return settings->value("terminal", "/usr/bin/x-terminal-emulator -e %c").toString();
 }
+
+QString SettingsProvider::socketPath() const
+{
+	return settings->value("singleInstanceSocket", "/tmp/qsrun").toString();
+}
