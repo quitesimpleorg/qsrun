@@ -116,7 +116,7 @@ void EntryPushButton::mousePressEvent(QMouseEvent *event)
 
 void EntryPushButton::mouseMoveEvent(QMouseEvent *event)
 {
-	if(this->config.type == EntryType::SYSTEM)
+	if(this->config.type == EntryType::SYSTEM || this->config.type == EntryType::DYNAMIC)
 	{
 		return;
 	}
