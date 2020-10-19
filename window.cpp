@@ -166,6 +166,7 @@ void Window::addToFavourites(const EntryConfig &config)
 	when we add it to the favourites. the alternative would be to reload the whole config,
 	but that's probably overkill. */
 	userConfig.update(config);
+	userConfig.key = "";
 	userEntryButtons.append(createEntryButton(userConfig));
 }
 
