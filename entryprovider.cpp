@@ -309,7 +309,10 @@ void EntryProvider::saveUserEntry(const EntryConfig &config)
 	outStream << "row" << " " << config.row << endl;
 	outStream << "col" << " " << config.col << endl;
 	outStream << "hidden" << " " << config.hidden << endl;
-	outStream << "key" << " " << config.key << endl;
+	if(!config.key.isEmpty())
+	{
+		outStream << "key" << " " << config.key << endl;
+	}
 	if(config.type == EntryType::USER)
 	{
 		if(!config.name.isEmpty())
