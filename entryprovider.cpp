@@ -25,7 +25,7 @@ EntryConfig EntryProvider::readFromDesktopFile(const QString &path)
 	if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
 		// TODO: better exception class
-		throw new std::runtime_error("Failed to open file");
+		throw std::runtime_error("Failed to open file");
 	}
 	QTextStream stream(&file);
 	// There should be nothing preceding this group in the desktop entry file but possibly one or more comments.
@@ -120,7 +120,7 @@ EntryConfig EntryProvider::readqsrunFile(const QString &path)
 	if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
 		// TODO: better exception class
-		throw new std::runtime_error("Failed to open file");
+		throw std::runtime_error("Failed to open file");
 	}
 	QHash<QString, QString> map;
 	QTextStream stream(&file);
@@ -131,7 +131,7 @@ EntryConfig EntryProvider::readqsrunFile(const QString &path)
 		int spacePos = line.indexOf(' ');
 		if(spacePos == -1)
 		{
-			throw new ConfigFormatException("misformated line in .qsrun config file " + path.toStdString());
+			throw ConfigFormatException("misformated line in .qsrun config file " + path.toStdString());
 		}
 
 		QString key = line.mid(0, spacePos);
@@ -139,7 +139,7 @@ EntryConfig EntryProvider::readqsrunFile(const QString &path)
 
 		if(key == "" || value == "")
 		{
-			throw new ConfigFormatException("empty key or value in .qsrun config file " + path.toStdString());
+			throw ConfigFormatException("empty key or value in .qsrun config file " + path.toStdString());
 		}
 		map[key] = value;
 	}
@@ -154,7 +154,7 @@ EntryConfig EntryProvider::readqsrunFile(const QString &path)
 		}
 		else
 		{
-			throw new ConfigFormatException("Error attempting to read inherited entry");
+			throw ConfigFormatException("Error attempting to read inherited entry");
 		}
 	}
 	QString type = map["type"];
@@ -162,7 +162,7 @@ EntryConfig EntryProvider::readqsrunFile(const QString &path)
 	{
 		if(type == "system")
 		{
-			throw new ConfigFormatException(".qsrun files cannot be designated as system entries " +
+			throw ConfigFormatException(".qsrun files cannot be designated as system entries " +
 											path.toStdString());
 		}
 		else if(type == "inherit")
@@ -175,7 +175,7 @@ EntryConfig EntryProvider::readqsrunFile(const QString &path)
 		}
 		else
 		{
-			throw new ConfigFormatException("Invalid value for type provided in file: " + path.toStdString());
+			throw ConfigFormatException("Invalid value for type provided in file: " + path.toStdString());
 		}
 	}
 	else
