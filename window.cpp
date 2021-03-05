@@ -411,7 +411,8 @@ void Window::filterGridFor(QString filter)
 		bool userEntryMatch = false;
 		for(EntryPushButton *button : this->userEntryButtons)
 		{
-			if(button->getName().contains(filter, Qt::CaseInsensitive))
+			if(button->getName().contains(filter, Qt::CaseInsensitive) ||
+			   button->getCommand().contains(filter, Qt::CaseInsensitive))
 			{
 				button->setVisible(true);
 				grid->addWidget(button, button->getRow(), button->getCol());
@@ -427,7 +428,8 @@ void Window::filterGridFor(QString filter)
 			const int MAX_COLS = this->settingsProvider->getMaxCols();
 			for(EntryPushButton *button : this->systemEntryButtons)
 			{
-				if(button->getName().contains(filter, Qt::CaseInsensitive))
+				if(button->getName().contains(filter, Qt::CaseInsensitive) ||
+				   button->getCommand().contains(filter, Qt::CaseInsensitive))
 				{
 					button->setVisible(true);
 					if(i < 10)
