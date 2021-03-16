@@ -403,6 +403,27 @@ void Window::keyPressEvent(QKeyEvent *event)
 	QWidget::keyPressEvent(event);
 }
 
+int Window::rankConfig(const EntryConfig &config, QString filter) const
+{
+	if(config.command.startsWith(filter, Qt::CaseInsensitive))
+	{
+		return 0;
+	}
+	else if(config.command.contains(filter, Qt::CaseInsensitive))
+	{
+		return 1;
+	}
+	else if(config.name.startsWith(filter, Qt::CaseInsensitive))
+	{
+		return 2;
+	}
+	else if(config.name.contains(filter, Qt::CaseInsensitive))
+	{
+		return 3;
+	}
+	return -1;
+}
+
 void Window::filterGridFor(QString filter)
 {
 	if(filter.length() > 0)
@@ -422,27 +443,38 @@ void Window::filterGridFor(QString filter)
 		}
 		if(!userEntryMatch)
 		{
+			QVector<RankedButton> rankedEntries;
 			int currow = 0;
 			int curcol = 0;
 			int i = 1;
 			const int MAX_COLS = this->settingsProvider->getMaxCols();
 			for(EntryPushButton *button : this->systemEntryButtons)
 			{
-				if(button->getName().contains(filter, Qt::CaseInsensitive) ||
-				   button->getCommand().contains(filter, Qt::CaseInsensitive))
+				int ranking = rankConfig(button->getEntryConfig(), filter);
+				if(ranking > -1)
 				{
-					button->setVisible(true);
-					if(i < 10)
-					{
-						button->setShortcutKey(QString::number(i++));
-					}
-					grid->addWidget(button, currow, curcol++);
-					this->buttonsInGrid.append(button);
-					if(curcol == MAX_COLS)
-					{
-						curcol = 0;
-						++currow;
-					}
+					RankedButton rb;
+					rb.button = button;
+					rb.ranking = ranking;
+					rankedEntries.append(rb);
+				}
+			}
+			std::sort(rankedEntries.begin(), rankedEntries.end(),
+					  [](const RankedButton &a, const RankedButton &b) -> bool { return a.ranking < b.ranking; });
+			for(RankedButton &rankedButton : rankedEntries)
+			{
+				EntryPushButton *button = rankedButton.button;
+				button->setVisible(true);
+				if(i < 10)
+				{
+					button->setShortcutKey(QString::number(i++));
+				}
+				grid->addWidget(button, currow, curcol++);
+				this->buttonsInGrid.append(button);
+				if(curcol == MAX_COLS)
+				{
+					curcol = 0;
+					++currow;
 				}
 			}
 		}

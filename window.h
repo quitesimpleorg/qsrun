@@ -37,6 +37,13 @@
 #include "calculationengine.h"
 #include "settingsprovider.h"
 
+class RankedButton
+{
+  public:
+	EntryPushButton *button = nullptr;
+	int ranking;
+};
+
 class Window : public QWidget
 {
 	Q_OBJECT
@@ -77,7 +84,7 @@ class Window : public QWidget
 	QStringList generatePATHSuggestions(const QString &text);
 	void closeWindow();
 	std::pair<int, int> getNextFreeCell();
-
+	int rankConfig(const EntryConfig &config, QString filter) const;
   private slots:
 	void lineEditReturnPressed();
 	void showCalculationResultContextMenu(const QPoint &point);
