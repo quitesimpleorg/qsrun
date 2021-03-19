@@ -33,19 +33,7 @@ EntryPushButton::EntryPushButton(const EntryConfig &config) : QPushButton()
 		icon = resolveIcon(config.iconPath);
 	}
 	this->setIcon(icon);
-	if(!icon.availableSizes().isEmpty())
-	{
-		auto sizes = icon.availableSizes();
-		QSize maxSize = sizes.first();
-		for(QSize &current : sizes)
-		{
-			if(current.width() > maxSize.width())
-			{
-				maxSize = current;
-			}
-		}
-		this->setIconSize(maxSize);
-	}
+	this->setIconSize(QSize{256, 256});
 	this->config = config;
 	connect(this, SIGNAL(clicked()), this, SLOT(emitOwnClicked()));
 
