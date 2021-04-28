@@ -405,19 +405,19 @@ void Window::keyPressEvent(QKeyEvent *event)
 
 int Window::rankConfig(const EntryConfig &config, QString filter) const
 {
-	if(config.command.startsWith(filter, Qt::CaseInsensitive))
+	if(config.name.startsWith(filter, Qt::CaseInsensitive))
 	{
 		return 0;
 	}
-	else if(config.command.contains(filter, Qt::CaseInsensitive))
+	else if(config.command.startsWith(filter, Qt::CaseInsensitive))
 	{
 		return 1;
 	}
-	else if(config.name.startsWith(filter, Qt::CaseInsensitive))
+	else if(config.name.contains(filter, Qt::CaseInsensitive))
 	{
 		return 2;
 	}
-	else if(config.name.contains(filter, Qt::CaseInsensitive))
+	else if(config.command.contains(filter, Qt::CaseInsensitive))
 	{
 		return 3;
 	}
