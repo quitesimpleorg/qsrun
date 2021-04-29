@@ -301,35 +301,35 @@ void EntryProvider::saveUserEntry(const EntryConfig &config)
 		throw std::runtime_error("Error: Can not open file for writing");
 	}
 	QTextStream outStream(&file);
-	outStream << "type" << " " << ((config.type == EntryType::USER) ? "user" : "inherit") << endl;
+	outStream << "type" << " " << ((config.type == EntryType::USER) ? "user" : "inherit") << Qt::endl;
 	if(!config.inherit.isEmpty())
 	{
-		outStream << "inherit" << " " << config.inherit << endl;
+		outStream << "inherit" << " " << config.inherit << Qt::endl;
 	}
-	outStream << "row" << " " << config.row << endl;
-	outStream << "col" << " " << config.col << endl;
-	outStream << "hidden" << " " << config.hidden << endl;
+	outStream << "row" << " " << config.row << Qt::endl;
+	outStream << "col" << " " << config.col << Qt::endl;
+	outStream << "hidden" << " " << config.hidden << Qt::endl;
 	if(!config.key.isEmpty())
 	{
-		outStream << "key" << " " << config.key << endl;
+		outStream << "key" << " " << config.key << Qt::endl;
 	}
 	if(config.type == EntryType::USER)
 	{
 		if(!config.name.isEmpty())
 		{
-			outStream << "name" << " " << config.name << endl;
+			outStream << "name" << " " << config.name << Qt::endl;
 		}
 		if(!config.command.isEmpty())
 		{
-			outStream << "command" << " " << config.command << endl;
+			outStream << "command" << " " << config.command << Qt::endl;
 		}
 		if(!config.iconPath.isEmpty())
 		{
-			outStream << "icon" << " " << config.iconPath << endl;
+			outStream << "icon" << " " << config.iconPath << Qt::endl;
 		}
 		if(!config.arguments.empty())
 		{
-			outStream << "arguments" << " " << config.arguments.join(' ') << endl;
+			outStream << "arguments" << " " << config.arguments.join(' ') << Qt::endl;
 		}
 	}
 
