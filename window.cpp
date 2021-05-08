@@ -125,7 +125,7 @@ void Window::executeConfig(const EntryConfig &config)
 		QString cmd = settingsProvider->getTerminalCommand();
 		cmd.replace("%c", config.command);
 		QStringList args = QProcess::splitCommand(cmd);
-		QProcess::startDetached(cmd, args);
+		QProcess::startDetached(args[0], args);
 	}
 	else
 	{
