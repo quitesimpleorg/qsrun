@@ -38,13 +38,7 @@ Window::Window(EntryProvider &entryProvider, SettingsProvider &configProvider)
 	initFromConfig();
 	this->lineEdit->installEventFilter(this);
 	this->setAcceptDrops(true);
-	QFont font;
-	font.setPointSize(48);
-	font.setBold(true);
-	calculationResultLabel.setFont(font);
-	calculationResultLabel.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-	calculationResultLabel.setAlignment(Qt::AlignCenter);
-	calculationResultLabel.setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
+
 	connect(&calculationResultLabel, &QLabel::customContextMenuRequested, this,
 			&Window::showCalculationResultContextMenu);
 }
@@ -287,34 +281,22 @@ void Window::clearGrid()
 	buttonsInGrid.clear();
 }
 
-void Window::addCalcResult(const QString &expression)
+void Window::showGrowingOutputText(QString text)
 {
 	clearGrid();
-	currentCalculationResult = calcEngine.evaluate(expression);
-	QString labelText = expression + ": " + currentCalculationResult;
-	calculationResultLabel.setText(labelText);
+	calculationResultLabel.setText(text);
 	calculationResultLabel.setVisible(true);
 
-	QFont currentFont = calculationResultLabel.font();
-	int calculatedPointSize = currentFont.pointSize();
-	QFontMetrics fm(currentFont);
-	int contentWidth = calculationResultLabel.contentsRect().width() - calculationResultLabel.margin();
-	while(calculatedPointSize < 48 && fm.boundingRect(labelText).width() < contentWidth)
-	{
-		calculatedPointSize += 1;
-		currentFont.setPointSize(calculatedPointSize);
-		fm = QFontMetrics(currentFont);
-	}
-	while(fm.boundingRect(labelText).width() >= contentWidth)
-	{
-		calculatedPointSize -= 1;
-		currentFont.setPointSize(calculatedPointSize);
-		fm = QFontMetrics(currentFont);
-	}
 
-	calculationResultLabel.setFont(currentFont);
 
 	grid->addWidget(&calculationResultLabel, 0, 0);
+}
+void Window::addCalcResult(const QString &expression)
+{
+	currentCalculationResult = calcEngine.evaluate(expression);
+	QString labelText = expression + ": " + currentCalculationResult;
+	showGrowingOutputText(labelText);
+
 }
 
 // main problem here there is no easy event compression (clearing emit queue and only processing the last one)

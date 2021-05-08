@@ -36,6 +36,7 @@
 #include "entrypushbutton.h"
 #include "calculationengine.h"
 #include "settingsprovider.h"
+#include "textoutputlabel.h"
 
 class RankedButton
 {
@@ -59,7 +60,7 @@ class Window : public QWidget
 	QVector<EntryPushButton *> userEntryButtons;
 	QVector<EntryPushButton *> systemEntryButtons;
 	QVector<EntryPushButton *> buttonsInGrid;
-	QLabel calculationResultLabel;
+	TextoutputLabel calculationResultLabel;
 	QString currentCalculationResult;
 	QString queuedFileSearch;
 	QString queuedContentSearch;
@@ -85,7 +86,8 @@ class Window : public QWidget
 	void closeWindow();
 	std::pair<int, int> getNextFreeCell();
 	int rankConfig(const EntryConfig &config, QString filter) const;
-  private slots:
+	void showGrowingOutputText(QString text);
+private slots:
 	void lineEditReturnPressed();
 	void showCalculationResultContextMenu(const QPoint &point);
 
