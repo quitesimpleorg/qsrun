@@ -30,6 +30,7 @@
 
 #include "entryprovider.h"
 #include "window.h"
+
 Window::Window(EntryProvider &entryProvider, SettingsProvider &configProvider)
 {
 	this->entryProvider = &entryProvider;
@@ -53,6 +54,7 @@ void Window::initFromConfig()
 	{
 		this->userEntryButtons = generateEntryButtons(entryProvider->getUserEntries());
 		this->systemEntryButtons = generateEntryButtons(entryProvider->getSystemEntries());
+		this->specialCommands = settingsProvider->specialCommands();
 	}
 	catch(const ConfigFormatException &e)
 	{
@@ -318,14 +320,18 @@ void Window::lineEditTextChanged(QString text)
 		addPATHSuggestion(text);
 		if(this->grid->count() == 0)
 		{
-			QStringList arguments = text.split(" ");
+			QStringList arguments = QProcess::splitCommand(text);
+			QString command = arguments[0];
+			auto specialCommandConfig = getSpecialCommandConfig(command);
+			if(specialCommandConfig)
+			{
+				executeSpecialCommand(specialCommandConfig.value(), arguments);
+				return;
+			}
 			EntryConfig e;
 			e.name = "Execute: " + text;
-			if(arguments.length() > 1)
-			{
-				e.arguments = arguments.mid(1);
-			}
-			e.command = arguments[0];
+			e.command = command;
+			e.arguments = arguments;
 			e.iconPath = "utilities-terminal";
 			e.type = EntryType::DYNAMIC;
 
@@ -405,6 +411,28 @@ int Window::rankConfig(const EntryConfig &config, QString filter) const
 		return 3;
 	}
 	return -1;
+}
+
+std::optional<SpecialCommandConfig> Window::getSpecialCommandConfig(QString cmd) const
+{
+	SpecialCommandConfig result;
+	for(const SpecialCommandConfig &config : this->specialCommands)
+	{
+		if(config.command == cmd)
+		{
+			return config;
+		}
+	}
+	return { };
+}
+
+void Window::executeSpecialCommand(const SpecialCommandConfig &config, QStringList arguments)
+{
+	QProcess process;
+	process.start(config.command, arguments.mid(1));
+	process.waitForFinished();
+	QString result = process.readAllStandardOutput();
+	showGrowingOutputText(result);
 }
 
 void Window::filterGridFor(QString filter)

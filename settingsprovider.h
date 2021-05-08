@@ -3,6 +3,7 @@
 
 #include <QSettings>
 #include <stdexcept>
+#include "specialcommandconfig.h"
 
 class SettingsProvider
 {
@@ -17,6 +18,7 @@ class SettingsProvider
 	virtual bool singleInstanceMode() const;
 	QString getTerminalCommand() const;
 	QString socketPath() const;
+	QVector<SpecialCommandConfig> specialCommands() const;
 };
 
 #endif // SETTINGSPROVIDER_H

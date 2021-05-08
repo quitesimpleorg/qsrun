@@ -12,6 +12,7 @@ HEADERS += calculationengine.h \
            entrypushbutton.h \
            settingsprovider.h \
            singleinstanceserver.h \
+           specialcommandconfig.h \
            textoutputlabel.h \
            window.h
 SOURCES += calculationengine.cpp \
