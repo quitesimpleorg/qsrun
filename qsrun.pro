@@ -12,6 +12,7 @@ HEADERS += calculationengine.h \
            entrypushbutton.h \
            settingsprovider.h \
            singleinstanceserver.h \
+           textoutputlabel.h \
            window.h
 SOURCES += calculationengine.cpp \
            entryprovider.cpp \
@@ -19,6 +20,7 @@ SOURCES += calculationengine.cpp \
            main.cpp \
            settingsprovider.cpp \
            singleinstanceserver.cpp \
+           textoutputlabel.cpp \
            window.cpp
 QT += widgets sql network
 QT_CONFIG -= no-pkg-config
