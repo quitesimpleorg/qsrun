@@ -30,15 +30,17 @@ EntryConfig EntryProvider::readFromDesktopFile(const QString &path)
 	QTextStream stream(&file);
 	// There should be nothing preceding this group in the desktop entry file but possibly one or more comments.
 	// https://standards.freedesktop.org/desktop-entry-spec/latest/ar01s03.html#group-header
-	QString firstLine;
+	// Ignore that as there some that violate that in the wild
+	const QString startSection = "[Desktop Entry]";
+	QString line;
 	do
 	{
-		firstLine = stream.readLine().trimmed();
-	} while(!stream.atEnd() && (firstLine.isEmpty() || firstLine[0] == '#'));
+		line = stream.readLine().trimmed();
+	} while(!stream.atEnd() && line != startSection);
 
-	if(firstLine != "[Desktop Entry]")
+	if(line != startSection)
 	{
-		throw ConfigFormatException(".desktop file does not start with [Desktop Entry]: " + path.toStdString());
+		throw ConfigFormatException(".desktop file does not contain [Desktop Entry] section: " + path.toStdString());
 	}
 
 	while(!stream.atEnd())
